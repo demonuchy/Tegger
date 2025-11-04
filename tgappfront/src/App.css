@@ -1,0 +1,258 @@
+/* src/App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #ffffff;
+}
+
+/* Экран загрузки */
+.loading-screen {
+  background: #1a1a1a;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.loading {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.orange-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 165, 0, 0.3);
+  border-top: 6px solid #ffa500;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Главный экран */
+.main-screen {
+  background: #0a0a0a;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px 0;
+  border-bottom: 1px solid #333;
+}
+
+.main-title {
+  font-size: 2.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.title-bereg {
+  color: #ffffff;
+}
+
+.title-dona {
+  background: #ffa500;
+  color: #000000;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-weight: 800;
+  margin-left: 4px;
+}
+
+.header p {
+  color: #888;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.dev-warning {
+  background: rgba(255, 165, 0, 0.1);
+  border: 1px solid #ffa500;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin: 10px auto;
+  max-width: 300px;
+  font-size: 14px;
+  color: #ffa500;
+}
+
+/* Форма */
+.form-container {
+  max-width: 500px;
+  margin: 0 auto 30px;
+}
+
+.registration-form {
+  background: #111;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ccc;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #555;
+  background: #1f1f1f;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #666;
+}
+
+.submit-btn {
+  width: 100%;
+  background: #ffa500;
+  color: #000000;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: #ff8c00;
+  transform: translateY(-2px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Информация о пользователе */
+.user-info-card {
+  display:  flex;
+  flex-direction: column;
+  justify-content:  center;
+}
+.user-info-card h3 {
+  color: #ffa500;
+  margin-bottom: 15px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #ffa500;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 50%;
+}
+
+/* Футер */
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
+  border-top: 1px solid #333;
+  margin-top: 30px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .main-screen {
+    padding: 15px;
+  }
+  
+  .main-title {
+    font-size: 2em;
+  }
+  
+  .registration-form {
+    padding: 20px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    padding: 10px 14px;
+  }
+}
