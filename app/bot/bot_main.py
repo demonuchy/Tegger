@@ -29,7 +29,7 @@ class TeggerBot(TelegramClient):
         self._system_version = system_version
         self.bot_token = bot_token
         self._client = None
-        self.web_app_url = "https://old-deer-beam.loca.lt"
+        self.web_app_url = settings.WEB_APP_URL
         super().__init__(
             session=self._session,
             api_id=self._api_id,

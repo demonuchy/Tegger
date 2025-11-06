@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     API_HASH : str
     TOKEN_BOT : str
     WEBHOOK_TUNNEL_URL : str
+    WEB_APP_URL : str
 
     @property
     def AsyncDataBaseUrl(self):

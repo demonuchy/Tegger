@@ -1,20 +1,20 @@
 import os
 import sys
 import asyncio
-import uvicorn
+import json
+import uvicorn  
 from fastapi import FastAPI, Request
-from contextlib import contextmanager
-from telethon import events
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+from telethon import events, types
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from bot.bot_main import tegger, WEBHOOK_URL, WEBHOOK_PATH
 
 
-app = FastAPI()
 
 
-@app.on_event("startup")
 async def start_app():
     try:
         print("start server")
@@ -25,7 +25,7 @@ async def start_app():
         print(e)
 
 
-@app.on_event("shutdown")
+
 async def stop_app():
     print("stop server")
     try: 
@@ -35,6 +35,25 @@ async def stop_app():
         print(f"Error while closing client stream: {e}")
     finally:
         print("secsesfull stop")
+
+
+@asynccontextmanager
+async def lifespan(app : FastAPI):
+    await start_app()
+    yield
+    await stop_app()
+
+
+app = FastAPI(lifespan=lifespan)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post(WEBHOOK_PATH)
@@ -55,6 +74,12 @@ async def command_all(event):
        await tegger.send_webapp_button(event.chat_id)
     except Exception as e:
         print(f"Ошибка в обработчике команды /all: {e}")
+
+
+@tegger.on(events.Raw(types.UpdateBotWebhookJSONQuery))
+async def handle_webapp_data(event):
+    data = json.loads(event.data)
+    print("Данные:", data)
 
 
 @tegger.on(events.NewMessage(pattern="/all"))
@@ -84,4 +109,4 @@ async def command_help(event):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, port=8000, host="0.0.0.0", reload=True)
+    uvicorn.run("app.main:app", port=8000, host="0.0.0.0", reload=True)
