@@ -2,10 +2,13 @@ import os
 import sys
 import asyncio
 import requests
+import json
 from telethon import TelegramClient, events
-from telethon.tl.types import UpdateNewMessage, PeerUser, Message, PeerChannel, KeyboardButtonWebView, ReplyInlineMarkup, KeyboardButtonRow
+from telethon.tl.types import UpdateNewMessage, PeerUser, Message, PeerChannel, KeyboardButtonWebView, ReplyInlineMarkup, KeyboardButtonRow, UpdateBotWebhookJSON
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
 
 
 from cors.settings import settings
@@ -46,7 +49,23 @@ class TeggerBot(TelegramClient):
 
     @staticmethod
     def create_update_from_data(data: dict):
-        if "message" in data:
+        """Создает update из вебхук данных с поддержкой WebApp"""
+        print(f"📨 Received webhook data: {json.dumps(data, indent=2)}")
+    
+        # Обработка WebApp данных (tg.sendData())
+        if "web_app_data" in data:
+            print("🎯 This is WebApp data!")
+            # Для WebApp данных нужно создать соответствующий update
+            return UpdateBotWebhookJSON(
+                bot_id=data.get("bot_id", 0),
+                data=data["web_app_data"]["data"],
+                timeout=data.get("timeout", 0),
+                user_id=data["from"]["id"],
+                button_id=data["web_app_data"]["button_id"]
+            )
+    
+        # Обработка обычных сообщений (ваш существующий код)
+        elif "message" in data:
             message_data = data["message"]
             chat_id = message_data["chat"]["id"]
             text = message_data.get("text", "")
@@ -59,9 +78,9 @@ class TeggerBot(TelegramClient):
                 out=False,
                 media=None
             )
-            print(message)
             return UpdateNewMessage(message=message, pts=None, pts_count=None)
         else:
+            print(f"❓ Unknown update type: {data.keys()}")
             raise ValueError("Invalid update data")
 
 
@@ -85,9 +104,21 @@ class TeggerBot(TelegramClient):
         if not self.client:
             self.client = await self.initialize_client()
 
-    async def setup_webhook(self, url : str):
+    async def setup_webhook(self, url : str, drop_pending_updates : bool = False):
         try:
-            response = requests.post(f"https://api.telegram.org/bot{self.bot_token}/setWebhook", json={"url": url} )
+            response = requests.post(f"https://api.telegram.org/bot{self.bot_token}/setWebhook", 
+                                     json={
+                                        "url": url, 
+                                        "drop_pending_updates" : drop_pending_updates,
+                                        "secret_token" : settings.SECRET_TOKEN,
+                                        "allowed_updates": [
+                                                    "message", 
+                                                    "callback_query",
+                                                    "inline_query",
+                                                    "web_app_data"
+                                                ]
+                                        }
+                                    )
             if response.status_code == 200 and response.json().get("ok"):
                 print(f"Веб-хук успешно установлен: {url}")
             else:
@@ -106,7 +137,7 @@ class TeggerBot(TelegramClient):
             print(f"Ошибка при отправке запроса: {e}")
 
 
-    """ Engine """
+    """ Dispatch """
     async def get_chat_user(self, chat_id : int):
         try:
             users : list[str] = []

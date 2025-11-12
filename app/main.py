@@ -3,42 +3,51 @@ import sys
 import asyncio
 import json
 import uvicorn  
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from telethon import events, types
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from bot.bot_main import tegger, WEBHOOK_URL, WEBHOOK_PATH
+from aiogram.types import Update
+from services.bot.bot_aiogram import bot, dp, set_webhook, delete_webhook, WEBHOOK_PATH
+
+from services.database.middleware import db_session_middleware
+from services.database.config import create_all_tables, drop_all_tables
+from services.database.models.base import Base
+from services.auth import view
 
 
 
 
 async def start_app():
+    """Запуск приложения"""
     try:
         print("start server")
-        await tegger.open_client_stream()
-        await tegger.setup_webhook(WEBHOOK_URL)
-        print("secsesfull start")
+        await create_all_tables()
+        print("Create tables")
+        await set_webhook()
+        print("successful start")
     except Exception as e:
-        print(e)
-
+        print(f"Error starting app: {e}")
 
 
 async def stop_app():
-    print("stop server")
+    """Остановка приложения"""
     try: 
-        await tegger.close_client_stream()
-        await tegger.delete_webhook()
+        print("stop server")
+        await drop_all_tables()
+        await delete_webhook()
+        await bot.session.close()
     except Exception as e:
         print(f"Error while closing client stream: {e}")
     finally:
-        print("secsesfull stop")
-
+        print("successful stop")
 
 @asynccontextmanager
-async def lifespan(app : FastAPI):
+async def lifespan(app: FastAPI):
+    """Жизненный цикл"""
     await start_app()
     yield
     await stop_app()
@@ -47,66 +56,36 @@ async def lifespan(app : FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
+app.middleware("http")(db_session_middleware)
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust in production
+    allow_origins=[
+        "http://localhost:3000",
+        "https://bdfront.loca.lt",
+        "https://bdapp.loca.lt"
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
+
+
+
 @app.post(WEBHOOK_PATH)
-async def webhook_handler(request: Request):
-    data = await request.json()
+async def bot_webhook(update: dict):
+    """Обработка всех событий бота"""
     try:
-        update = tegger.create_update_from_data(data)
-        await tegger.client._dispatch_event(update)
+        telegram_update = Update(**update)
+        await dp.feed_webhook_update(bot, telegram_update)
+        return {"status": "ok"}
     except Exception as e:
-        print(f"Error processing update: {e}")
-    return {"status": 200}
-
-
-@tegger.on(events.NewMessage(pattern="/start"))
-async def command_all(event):
-    print("Worck")
-    try:
-       await tegger.send_webapp_button(event.chat_id)
-    except Exception as e:
-        print(f"Ошибка в обработчике команды /all: {e}")
-
-
-@tegger.on(events.Raw(types.UpdateBotWebhookJSONQuery))
-async def handle_webapp_data(event):
-    data = json.loads(event.data)
-    print("Данные:", data)
-
-
-@tegger.on(events.NewMessage(pattern="/all"))
-async def command_all(event):
-    print("Worck")
-    try:
-        chat = await event.get_chat()
-        users = await tegger.get_chat_user(chat_id=chat.id)
-        message = " ".join(users)
-        await event.respond(message)
-    except Exception as e:
-        print(f"Ошибка в обработчике команды /all: {e}")
-
-
-@tegger.on(events.NewMessage(pattern="/help"))
-async def command_help(event):
-    try:
-        message : str = """
-        Это бот помощник в нем реализованы различные функции для работы с группой Telegram
-        \nДоступные команды:
-        \n/all - Упамянуть всех участников чата
-        \n/help - Помощь 
-        \nКонтакт разработчика: @dmetro365"""
-        await event.respond(message)
-    except Exception as e:
-        print(f"Ошибка в обработчике команды /all: {e}")
-
+        return {"status": "error"}
+    
+app.include_router(view.router)
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", port=8000, host="0.0.0.0", reload=True)

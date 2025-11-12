@@ -5,6 +5,7 @@ from pydantic import  ConfigDict
 
 
 class Settings(BaseSettings):
+    """Настройкт проекта"""
 
     DB_USER : str
     DB_PASS : str
@@ -17,9 +18,11 @@ class Settings(BaseSettings):
     TOKEN_BOT : str
     WEBHOOK_TUNNEL_URL : str
     WEB_APP_URL : str
+    SECRET_TOKEN : str
 
     @property
     def AsyncDataBaseUrl(self):
+        """Url для подключения к базе данных"""
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     model_config = ConfigDict(

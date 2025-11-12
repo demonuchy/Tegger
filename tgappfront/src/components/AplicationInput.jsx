@@ -34,30 +34,6 @@ const AplicationInput = ({
     }
   };
 
-  if (type === 'textarea') {
-    return (
-      <div className={`input-group ${isActive ? 'input-group-active' : ''} ${error ? 'input-group-error' : ''}`}>
-        <label htmlFor={name} className="input-label">
-          {label}
-          {required && <span className="required-star">*</span>}
-        </label>
-        <textarea
-          id={name}
-          name={name}
-          value={value}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          rows={rows}
-          className="input-field input-textarea"
-          required={required}
-        />
-        {error && <div className="input-error">{error}</div>}
-      </div>
-    );
-  }
-
   return (
     <div className={`input-group ${isActive ? 'input-group-active' : ''} ${error ? 'input-group-error' : ''}`}>
       <label htmlFor={name} className="input-label">

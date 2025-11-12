@@ -1,146 +1,119 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AplicationInput from './AplicationInput';
 import { useTelegram } from '../hooks/useTelegramAPI';
+import useApi from '../hooks/useAPI';
+import SubmitStatus from './SubmitStatus';
 
 const Application = () => {
-  const {
-    user,
-    isLoading,
-    isDevelopmentMode,
-    showAlert,
-    sendData,
-    setupMainButton
-  } = useTelegram();
-
+  const { user, setupMainButton, isLoading, showAlert, sendData } = useTelegram();
   const [formData, setFormData] = useState({
     fullName: '',
-    phone: '',
-    email: ''
+    phone: ''
   });
-  const [activeField, setActiveField] = useState(null);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({
+    fullName: '',
+    phone: ''
+  });
 
-  const validatePhone = (phone) => {
-    const phoneRegex = /^[0-9]{0,11}$/;
-    return phoneRegex.test(phone);
-  };
+  const { aplicationRequest } = useApi()
+  const formDataRef = useRef(formData);
+  const [submitStatus, setSubmitStatus] = useState('idle'); // 'idle', 'loading', 'success' , 'error'
   
-  const formatPhone = (phone, previousPhone = '') => {
-    const cleaned = phone.replace(/\D/g, '');
-    const previousCleaned = previousPhone.replace(/\D/g, '');
-    
-    const isDeleting = cleaned.length < previousCleaned.length;
-    
-    if (isDeleting && cleaned.length <= 1) {
-      return cleaned;
-    }
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
+  const formatPhone = useCallback((value) => {
+    const cleaned = value.replace(/\D/g, '');
     
     if (cleaned.length === 0) return '';
-    
-    if (cleaned.length === 1) {
-      return cleaned === '7' ? '+7 (' : `+7 (${cleaned}`;
-    }
-    if (cleaned.length <= 4) {
-      return `+7 (${cleaned.slice(1)}`;
-    }
-    if (cleaned.length <= 7) {
-      return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4)}`;
-    }
-    if (cleaned.length <= 9) {
-      return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
-    }
+    if (cleaned.length === 1) return cleaned === '7' ? '+7 (' : `+7 (${cleaned}`;
+    if (cleaned.length <= 4) return `+7 (${cleaned.slice(1)}`;
+    if (cleaned.length <= 7) return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4)}`;
+    if (cleaned.length <= 9) return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
     return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7, 9)}-${cleaned.slice(9, 11)}`;
-  };
+  }, []);
 
-  const handleInputChange = (e) => {
+  const validatePhone = useCallback((phone) => {
+    const cleaned = phone.replace(/\D/g, '');
+    return cleaned.length === 11;
+  }, []);
+
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    
-    let newValue = value;
-    let error = '';
-  
+    setErrors(prev => ({ ...prev, [name]: '' }));
     if (name === 'phone') {
-      const previousValue = formData.phone;
-      const cleanedValue = value.replace(/\D/g, '');
-      
-      if (!validatePhone(cleanedValue)) {
-        error = 'Номер телефона должен содержать только цифры (максимум 11)';
-      } else if (cleanedValue.length > 11) {
-        error = 'Номер телефона не может быть длиннее 11 цифр';
+      const cleaned = value.replace(/\D/g, '');
+      if (cleaned.length <= 11) {
+        setFormData(prev => ({
+          ...prev,
+          [name]: formatPhone(value)
+        }));
       }
-      
-      newValue = formatPhone(value, previousValue);
-    }
-  
-    setFormData(prev => ({
-      ...prev,
-      [name]: newValue
-    }));
-  
-    setErrors(prev => ({
-      ...prev,
-      [name]: error
-    }));
-  };
-
-  const handleInputFocus = (fieldName) => {
-    setActiveField(fieldName);
-  };
-
-  const handleInputBlur = () => {
-    setActiveField(null);
-  };
-
-  const handleSubmit = useCallback(() => {
-    const newErrors = {};
-    
-    // Валидация ФИО
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Поле ФИО обязательно для заполнения';
-    }
-    
-    // Валидация телефона
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Поле телефона обязательно для заполнения';
     } else {
-      const cleanedPhone = formData.phone.replace(/\D/g, '');
-      if (cleanedPhone.length !== 11) {
-        newErrors.phone = 'Номер телефона должен содержать 11 цифр';
-      }
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
     }
-    
-    // Валидация email (если заполнен)
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Введите корректный email адрес';
-    }
-    
-    setErrors(newErrors);
-    const hasErrors = Object.keys(newErrors).length > 0;
-    
-    if (hasErrors) {
-      showAlert('Пожалуйста, заполните обязательные поля корректно');
+  }, [formatPhone]);
+
+  const showErrorAnimation = useCallback((fieldName, message) => {
+    setErrors(prev => ({ ...prev, [fieldName]: message }));
+    setTimeout(() => {
+      setErrors(prev => ({ ...prev, [fieldName]: '' }));
+    }, 3000);
+  }, []);
+
+  const handlerSubmitMainButton = useCallback(async () => {
+    const currentFormData = formDataRef.current;
+    if (!currentFormData.fullName.trim()) {
+      showErrorAnimation('fullName', 'Пожалуйста, введите ФИО');
       return;
     }
-    
-    const submitData = {
-      ...formData,
-      user: user || 'unknown'
+    const cleanedPhone = currentFormData.phone.replace(/\D/g, '');
+    if (!validatePhone(currentFormData.phone)) {
+      showErrorAnimation('phone', 'Введите корректный номер телефона (11 цифр)');
+      return;
+    }
+    const applicationData = {
+      full_name: currentFormData.fullName.trim(),
+      telegram_id: user?.id?.toString() || 'unknown',
+      telegram_user_name: user?.username || 'unknown',
+      phone_number: cleanedPhone
     };
-    
-    const success = sendData(JSON.stringify(submitData));
-    if (success) {
-      showAlert('Данные успешно отправлены!');
-    } else {
-      console.log('Отправка данных (режим разработки):', submitData);
-      alert('Данные успешно отправлены! (режим разработки)');
-    }
-  }, [formData, user, showAlert, sendData]);
+    console.log('Отправка данных:', applicationData);
 
-  // Настраиваем главную кнопку Telegram
-  React.useEffect(() => {
-    if (!isDevelopmentMode) {
-      setupMainButton('Отправить данные', handleSubmit);
+    setSubmitStatus('loading');
+    const success = await aplicationRequest(currentFormData.fullName.trim(), user?.id?.toString() || 'unknown', user?.username || 'unknown', cleanedPhone)
+    if (success) {
+      setSubmitStatus('success');
+      setFormData({
+        fullName: '',
+        phone: ''
+      });
+      setTimeout(()=>{
+      if (window.Telegram?.WebApp?.close) {
+        window.Telegram.WebApp.close();
+      }}, 2000)
+    } else {
+      setSubmitStatus('error');
+      setFormData({
+        fullName: '',
+        phone: ''
+      });
+      setTimeout(()=>{
+        if (window.Telegram?.WebApp?.close) {
+          window.Telegram.WebApp.close();
+        }}, 2000)
     }
-  }, [isDevelopmentMode, setupMainButton, handleSubmit]);
+  }, [user, aplicationRequest, validatePhone, showErrorAnimation]);
+
+  useEffect(() => {
+    if(!isLoading){
+      setupMainButton("Отправить заявку", handlerSubmitMainButton, {color: "#e68a00", textColor: "#ffffff"});
+    }
+  }, [setupMainButton, isLoading]);
 
   if (isLoading) {
     return (
@@ -153,6 +126,21 @@ const Application = () => {
     );
   }
 
+  if (submitStatus === 'loading' || submitStatus === 'success' || submitStatus==='error') {
+    const messages = {
+      loading: 'Отправляем заявку...',
+      success: 'Заявка отправлена!',
+      error: 'Ошибка отправки. Попробуйте еще раз.'
+    };
+    
+    return (
+      <SubmitStatus 
+        status={submitStatus}
+        message={messages[submitStatus]}
+      />
+    );
+  }
+
   return (
     <div className="app main-screen">
       <header className="header">
@@ -161,21 +149,16 @@ const Application = () => {
           <span className="title-dona">Дона</span>
         </h1>
         <p>Заполните форму для вступления</p>
-        {isDevelopmentMode && (
-          <div className="dev-mode-banner">
-            🔧 Режим разработки (Telegram не обнаружен)
-          </div>
-        )}
       </header>
 
       <div className="user-info-card">
         <h3>
           <div className="user-avatar">
-            {user && user.photo_url ? (
+            {user?.photo_url ? (
               <img src={user.photo_url} alt="Avatar" className="avatar-img" />
             ) : (
               <div className="avatar-placeholder">
-                {user && user.first_name ? user.first_name[0].toUpperCase() : 'U'}
+                {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
               </div>
             )}
           </div>
@@ -189,7 +172,7 @@ const Application = () => {
             {user.username && <p><strong>Username:</strong> @{user.username}</p>}
           </>
         ) : (
-          <p style={{display: "flex", justifyContent: "center"}}>Dev</p>
+          <p style={{ display: "flex", justifyContent: "center" }}>Режим разработки</p>
         )}
       </div>
 
@@ -201,12 +184,9 @@ const Application = () => {
             name="fullName"
             value={formData.fullName}
             onChange={handleInputChange}
-            onFocus={() => handleInputFocus('fullName')}
-            onBlur={handleInputBlur}
             placeholder="Введите ваше полное имя"
-            required={true}
+            required
             error={errors.fullName}
-            isActive={activeField === 'fullName'}
           />
 
           <AplicationInput
@@ -215,43 +195,12 @@ const Application = () => {
             name="phone"
             value={formData.phone}
             onChange={handleInputChange}
-            onFocus={() => handleInputFocus('phone')}
-            onBlur={handleInputBlur}
-            placeholder="+7 (XXX) XXX-XX-XX"
-            required={true}
+            placeholder="+7 (999) 999-99-99"
+            required
             error={errors.phone}
-            isActive={activeField === 'phone'}
-            maxLength={18}
-          />
-
-          <AplicationInput
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            onFocus={() => handleInputFocus('email')}
-            onBlur={handleInputBlur}
-            placeholder="your@email.com"
-            error={errors.email}
-            isActive={activeField === 'email'}
           />
         </form>
       </div>
-
-      {isDevelopmentMode && (
-        <div className="dev-controls">
-          <button 
-            className="submit-button"
-            onClick={handleSubmit}
-          >
-            📨 Отправить данные (тест)
-          </button>
-          <div className="dev-info">
-            <p>В режиме Telegram кнопка отправки будет внизу экрана</p>
-          </div>
-        </div>
-      )}
 
       <footer className="footer">
         <p>© 2024 Берег Дона. Все права защищены.</p>
