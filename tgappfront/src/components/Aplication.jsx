@@ -5,7 +5,7 @@ import useApi from '../hooks/useAPI';
 import SubmitStatus from './SubmitStatus';
 
 const Application = () => {
-  const { user, setupMainButton, isLoading } = useTelegram();
+  const { user, setupMainButton, isLoading, mainButton } = useTelegram();
   const [formData, setFormData] = useState({
     fullName: '',
     phone: ''
@@ -106,8 +106,6 @@ const Application = () => {
   
   const handlerSubmitMainButton = useCallback(async () => {
     const currentFormData = formDataRef.current;
-    
-    // Собираем все ошибки
     const newErrors = {};
     if (!validateFullName(currentFormData.fullName)) {
       newErrors.fullName = 'Пожалуйста, введите ФИО';
@@ -140,6 +138,7 @@ const Application = () => {
     if (success) {
       setSubmitStatus('success');
       claenForm()
+      mainButton.disable()
     } else {
       setSubmitStatus('error');
       claenForm()

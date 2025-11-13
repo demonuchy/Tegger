@@ -8,3 +8,12 @@ class AplicationRequest(BaseModel):
     telegram_user_name : str
     phone_number : str
     
+class ApplicationScheme(BaseModel):
+    """Схема модели заявки"""
+    id: int
+    # Паспортные данные ...
+    full_name: str 
+    phone_number: str
+    # Telegram данные
+    telegram_id: str
+    telegram_user_name: str

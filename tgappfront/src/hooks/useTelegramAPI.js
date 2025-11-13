@@ -259,6 +259,7 @@ export const useTelegram = () => {
     user,
     isLoading,
     isDevelopmentMode,
+    mainButton,
     showAlert,
     sendData,
     setupMainButton,
