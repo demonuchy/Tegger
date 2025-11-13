@@ -10,7 +10,6 @@ class AplicationRequest(BaseModel):
     
 class ApplicationScheme(BaseModel):
     """Схема модели заявки"""
-    id: int
     # Паспортные данные ...
     full_name: str 
     phone_number: str

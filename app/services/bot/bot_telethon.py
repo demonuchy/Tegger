@@ -9,8 +9,6 @@ from telethon.tl.types import UpdateNewMessage, PeerUser, Message, PeerChannel, 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-
-
 from cors.settings import settings
 
 WEBHOOK_PATH = f"/bot/{settings.TOKEN_BOT}"

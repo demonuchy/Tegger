@@ -17,9 +17,10 @@ from services.bot.bot_aiogram import bot, dp, set_webhook, delete_webhook, WEBHO
 from services.database.middleware import db_session_middleware
 from services.database.config import create_all_tables, drop_all_tables
 from services.database.models.base import Base
-from services.database.models.auth import Applications, Users
-from services.auth.view import auth_router
+
+from services.application.views import auth_router
 from services.database.config import engine
+from services.admin.setup import AdminSetup
 
 
 async def start_app():
@@ -55,18 +56,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-admin = Admin(app, engine)
 
-class UserAdmin(ModelView, model=Users):
-    column_list = [Users.id, Users.telegram_user_name, Users.full_name, Users.phone_number, Users.is_active, Users.is_admin]
-    exclude_list = [Users.created_at, Users.updated_at, Users.telegram_id]
-
-class ApplicationAdmin(ModelView, model=Applications):
-    column_list = [Applications.id, Applications.telegram_user_name, Applications.full_name, Applications.phone_number, Applications.is_active, Applications.is_accepted]
-    exclude_list = [Applications.created_at]
-
-admin.add_view(UserAdmin)
-admin.add_view(ApplicationAdmin)
+admin = AdminSetup(app, engine)
 
 
 app.middleware("http")(db_session_middleware)
@@ -84,7 +75,7 @@ app.add_middleware(
 app.include_router(auth_router)
 
 @app.post(WEBHOOK_PATH)
-async def bot_webhook(update: dict):
+async def bot_webhook(request : Request, update: dict):
     """Обработка всех событий бота"""
     try:
         telegram_update = Update(**update)
@@ -93,8 +84,6 @@ async def bot_webhook(update: dict):
     except Exception as e:
         return {"status": "error"}
     
-
-
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", port=8000, host="0.0.0.0", reload=True)

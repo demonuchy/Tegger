@@ -7,7 +7,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from services.database.models.auth import Applications
+from app.services.database.models.applications import Applications
 
 
 class ApplicationSerializer(SQLAlchemyAutoSchema):

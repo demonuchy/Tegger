@@ -5,10 +5,10 @@ from fastapi.responses import JSONResponse
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from auth.schem import AplicationRequest, ApplicationScheme
+from application.schem import AplicationRequest, ApplicationScheme
 from services.bot.bot_aiogram import send_application_notifications, send_message
-from services.database.models.auth import Applications
-from auth.sertalizer import ApplicationSerializer, ApplicationModelSerealizer
+from app.services.database.models.applications import Applications
+from application.sertalizer import ApplicationSerializer, ApplicationModelSerealizer
 
 auth_router = APIRouter(prefix="/api/auth", tags=["Pub"])
 
