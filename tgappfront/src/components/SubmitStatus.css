@@ -2,8 +2,8 @@
 .big-gray-spinner {
     width: 80px;
     height: 80px;
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #666;
+    border: 8px solid rgba(255, 165, 0, 0.3);
+    border-top: 8px solid #ffa500;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -20,6 +20,8 @@
     font-size: 40px;
     font-weight: bold;
     animation: scaleIn 0.5s ease-out;
+
+    box-shadow: 0 0 20px 5px rgba(76, 175, 80, 0.6);
   }
   
   .error-cross {
@@ -34,6 +36,8 @@
     font-size: 40px;
     font-weight: bold;
     animation: scaleIn 0.5s ease-out;
+
+    box-shadow: 0 0 20px 5px rgba(244, 67, 54, 0.6);
   }
   
   /* Анимации */

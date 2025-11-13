@@ -5,7 +5,7 @@ import useApi from '../hooks/useAPI';
 import SubmitStatus from './SubmitStatus';
 
 const Application = () => {
-  const { user, setupMainButton, isLoading, showAlert, sendData } = useTelegram();
+  const { user, setupMainButton, isLoading } = useTelegram();
   const [formData, setFormData] = useState({
     fullName: '',
     phone: ''
@@ -17,15 +17,30 @@ const Application = () => {
 
   const { aplicationRequest } = useApi()
   const formDataRef = useRef(formData);
-  const [submitStatus, setSubmitStatus] = useState('idle'); // 'idle', 'loading', 'success' , 'error'
+  const errorRef = useRef(errors)
+  const [submitStatus, setSubmitStatus] = useState('idle');// 'idle', 'loading', 'success' , 'error'
   
   useEffect(() => {
     formDataRef.current = formData;
   }, [formData]);
 
+  useEffect(() => {
+    errorRef.current = errors;
+  }, [errors]);
+
+  const claenForm = useCallback(()=>{
+    setFormData({
+      fullName: '',
+      phone: ''
+    });
+    setTimeout(()=>{
+    if (window.Telegram?.WebApp?.close) {
+      window.Telegram.WebApp.close();
+    }}, 1000)
+  },[])
+
   const formatPhone = useCallback((value) => {
     const cleaned = value.replace(/\D/g, '');
-    
     if (cleaned.length === 0) return '';
     if (cleaned.length === 1) return cleaned === '7' ? '+7 (' : `+7 (${cleaned}`;
     if (cleaned.length <= 4) return `+7 (${cleaned.slice(1)}`;
@@ -35,8 +50,21 @@ const Application = () => {
   }, []);
 
   const validatePhone = useCallback((phone) => {
+    if (!phone || typeof phone !== 'string') return false;
     const cleaned = phone.replace(/\D/g, '');
-    return cleaned.length === 11;
+    if (cleaned.length !== 11) return false;
+    const validStarts = ['79', '89', '77', '87'];
+    const startDigits = cleaned.substring(1, 3);
+    return cleaned.startsWith('7') || cleaned.startsWith('8') && validStarts.includes(startDigits);
+  }, []);
+
+  const validateFullName = useCallback((fullName) => {
+    if (!fullName || typeof fullName !== 'string') return false;
+    const trimmedName = fullName.trim();
+    const nameParts = trimmedName.split(/\s+/).filter(part => part.length > 0);
+    const cyrillicRegex = /^[а-яё\s-]+$/i;
+    const isValidCyrillic = nameParts.every(part => cyrillicRegex.test(part));
+    return nameParts.length === 3 && isValidCyrillic;
   }, []);
 
   const handleInputChange = useCallback((e) => {
@@ -51,31 +79,54 @@ const Application = () => {
         }));
       }
     } else {
+      const processedValue  = value.split(' ').map(word => {
+        if (word.length > 0) return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        return word;})
+        .join(' ');
       setFormData(prev => ({
         ...prev,
-        [name]: value
+        [name]: processedValue
       }));
     }
   }, [formatPhone]);
 
   const showErrorAnimation = useCallback((fieldName, message) => {
-    setErrors(prev => ({ ...prev, [fieldName]: message }));
+    setErrors(prev => ({ 
+      ...prev, 
+      [fieldName]: message 
+    }));
     setTimeout(() => {
-      setErrors(prev => ({ ...prev, [fieldName]: '' }));
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[fieldName];
+        return newErrors;
+      });
     }, 3000);
   }, []);
-
+  
   const handlerSubmitMainButton = useCallback(async () => {
     const currentFormData = formDataRef.current;
-    if (!currentFormData.fullName.trim()) {
-      showErrorAnimation('fullName', 'Пожалуйста, введите ФИО');
-      return;
+    
+    // Собираем все ошибки
+    const newErrors = {};
+    if (!validateFullName(currentFormData.fullName)) {
+      newErrors.fullName = 'Пожалуйста, введите ФИО';
     }
+    
     const cleanedPhone = currentFormData.phone.replace(/\D/g, '');
     if (!validatePhone(currentFormData.phone)) {
-      showErrorAnimation('phone', 'Введите корректный номер телефона (11 цифр)');
+      newErrors.phone = 'Введите корректный номер телефона';
+    }
+  
+    // Если есть ошибки - показываем все через showErrorAnimation
+    if (Object.keys(newErrors).length > 0) {
+      // Показываем все ошибки одновременно
+      Object.entries(newErrors).forEach(([field, message]) => {
+        showErrorAnimation(field, message);
+      });
       return;
     }
+  
     const applicationData = {
       full_name: currentFormData.fullName.trim(),
       telegram_id: user?.id?.toString() || 'unknown',
@@ -83,31 +134,17 @@ const Application = () => {
       phone_number: cleanedPhone
     };
     console.log('Отправка данных:', applicationData);
-
+  
     setSubmitStatus('loading');
     const success = await aplicationRequest(currentFormData.fullName.trim(), user?.id?.toString() || 'unknown', user?.username || 'unknown', cleanedPhone)
     if (success) {
       setSubmitStatus('success');
-      setFormData({
-        fullName: '',
-        phone: ''
-      });
-      setTimeout(()=>{
-      if (window.Telegram?.WebApp?.close) {
-        window.Telegram.WebApp.close();
-      }}, 2000)
+      claenForm()
     } else {
       setSubmitStatus('error');
-      setFormData({
-        fullName: '',
-        phone: ''
-      });
-      setTimeout(()=>{
-        if (window.Telegram?.WebApp?.close) {
-          window.Telegram.WebApp.close();
-        }}, 2000)
+      claenForm()
     }
-  }, [user, aplicationRequest, validatePhone, showErrorAnimation]);
+  }, [user, aplicationRequest, validatePhone, validateFullName, claenForm, showErrorAnimation]);
 
   useEffect(() => {
     if(!isLoading){
