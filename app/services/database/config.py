@@ -14,13 +14,19 @@ async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 async def create_all_tables():
     """Создание всех таблиц из моделей"""
+    print('до очищения кеша', len(Base.metadata.tables))
+    Base.metadata.clear()
+    print('после очищения', len(Base.metadata.tables))
     try:
+        from database.models.applications import Applications, Users
+        from database.models.admin import Admins
+        print('после импорта', len(Base.metadata.tables))
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+        print("✅ Таблицы созданы")
         return {"status": "success", "message": "Все таблицы созданы"}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
-
+        raise e
 
 async def drop_all_tables():
     """Удаление всех таблиц"""
@@ -29,4 +35,4 @@ async def drop_all_tables():
             await conn.run_sync(Base.metadata.drop_all)
         return {"status": "success", "message": "Все таблицы удалены"}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        raise e

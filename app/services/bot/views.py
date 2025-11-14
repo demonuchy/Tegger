@@ -1,68 +1,85 @@
 import os
 import sys
-
-from typing import Any, Callable, Dict, Awaitable
+from typing import Any, Callable, Dict, Awaitable, Optional
 from aiogram import F, BaseMiddleware, Router
-from aiogram.types import  CallbackQuery, Update
-
+from aiogram.types import  CallbackQuery, Update, Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.filters import Command
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from cors.settings import settings
+
 from app.services.database.models.applications import Applications, Users
-from bot.sertalizer import ApplicationSerializer, ApplicationModelSerealizer, UserModelSerializetr
-from bot.schem import AplicationRequest, ApplicationScheme, UserSheme
 
 
 admin_router = Router()
 
 
-class MyMiddleware(BaseMiddleware):
+class AdminMiddleware(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[Update, Dict[str, Any]], Awaitable[Any]],
         event: Update,
         data: Dict[str, Any]
     ) -> Any:
-        root_user  = await  Users.objects.get_by_field(field_name="telegram_id", value=str(event.from_user.id))
-        if root_user is None:
-            await event.answer("Вы не зарегестрированы в приложении действие отклонено")
-            return
-        root_user_serializer = UserModelSerializetr()
-        root_user : UserSheme = root_user_serializer.dump_to_pydantic(root_user, pydantic_model=UserSheme)
-        if not (root_user.is_active or root_user.is_admin):
-            await event.answer("Вы не имеете прав администратора действие отклонено")
-            return
-        result = await handler(event, data)
-        return result
+        user_id = event.from_user.id
+        root_user: Optional[Users] = await Users.objects.get_by_field(field_name="telegram_id", value=str(user_id))
+        if not root_user or not root_user.is_active or not root_user.is_admin:
+            if isinstance(event, Message): await event.answer("❌ У вас нет прав администратора")
+            elif isinstance(event, CallbackQuery): await event.message.answer("❌ У вас нет прав администратора", show_alert=True)
+            return  
+        return await handler(event, data)
+    
+
+admin_router.message.middleware(AdminMiddleware())
+admin_router.callback_query.middleware(AdminMiddleware())
+
+
+@admin_router.message(Command("application"))
+async def get_active_application(message : Message):
+    pass
+
+
+@admin_router.message(Command('admin'))
+async def admin_panel(message : Message):
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Aдмин панель", url=f"https://bdapi.loca.lt/admin")]
+            ])
+    await message.answer("Нажмите кнопку чтобы открыть ссылку:", reply_markup=keyboard)
+
 
 
 @admin_router.callback_query(F.data.startswith('accept_'))
-async def application_accept_handler(callback : CallbackQuery):
+async def application_accept_handler(callback : CallbackQuery, application_id : Optional[int] = None):
     """Принимаем заявку от пользователя"""
     application_id = int(callback.data.split("_")[1])
     application : Applications = await  Applications.objects.get(application_id)
-    if not application or not (hasattr(application, 'is_active') and application.is_active):
-        await callback.answer("Заявка не найдена")
-        return 
-    application_schema : ApplicationScheme = ApplicationModelSerealizer().dump_to_pydantic(application, pydantic_model=ApplicationScheme)
-    user = await Users.objects.exists(telegram_id =  application_schema.telegram_id)
+    if not application or application.status != 'active':
+        await callback.message.delete()
+        return await callback.message.answer("Заявка не найдена или не активна")
+    user = await Users.objects.exists(telegram_id =  application.telegram_id)
     if user:
         await callback.answer("Пользователь уже заригестрирован видимо заявка устарела")
         return
-    await Users.objects.create(**application_schema.model_dump())
+    await Users.objects.create(
+                            full_name=application.full_name, 
+                            phone_number=application.phone_number, 
+                            telegram_id=application.telegram_id, 
+                            telegram_user_name=application.telegram_user_name
+                            )
     await callback.message.delete()
     await application.accept()
-    await callback.bot.send_message(application_schema.telegram_id, "✅ Ваша заявка на вступление принята")
+    await callback.bot.send_message(application.telegram_id, "✅ Ваша заявка на вступление принята")
 
 
 @admin_router.callback_query(F.data.startswith('reject_'))
-async def application_reject_handler(callback : CallbackQuery):
+async def application_reject_handler(callback : CallbackQuery, application_id : Optional[int] = None):
     """Откланяем заявку пользователя"""
     application_id = int(callback.data.split("_")[1])
     application  : Applications = await Applications.objects.get(application_id)
-    application_schema: ApplicationScheme = ApplicationModelSerealizer().dump_to_pydantic(application, pydantic_model=ApplicationScheme)
+    if not application or application.status != 'active':
+        await callback.message.delete()
+        return await callback.message.answer("Заявка не найдена или не активна")
     await callback.message.delete()
     await application.reject()
-    await callback.bot.send_message(application_schema.telegram_id, "❌ К сожалению ваша заявка отклонена")
+    await callback.bot.send_message(application.telegram_id, "❌ К сожалению ваша заявка отклонена")

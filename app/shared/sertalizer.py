@@ -25,7 +25,7 @@ class ApplicationSerializer(BaseModelSerializer):
     class Meta:
         model = Applications
         load_instance = True
-        exclude = ('is_accepted', 'is_active', 'created_at',)
+        exclude = ('created_at', 'status', )
 
 
 class ApplicationModelSerealizer(BaseModelSerializer):
@@ -33,7 +33,7 @@ class ApplicationModelSerealizer(BaseModelSerializer):
     class Meta:
         model = Applications
         load_instance = True
-        exclude = ( 'is_accepted', 'is_active','created_at', 'id')
+        exclude = ('created_at',)
 
     
 class UserModelSerializetr(BaseModelSerializer):

@@ -1,11 +1,13 @@
 import os
 import sys
 from sqlalchemy import select, func
-from typing import List, Optional, Any
+from typing import List, Optional, Any, TypeVar
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database.context import get_session
+
+T = TypeVar("T")
 
 class BaseManager:
     """Менеджер объектов в стиле Django"""
@@ -72,7 +74,7 @@ class BaseManager:
         result = await session.execute(stmt)
         return result.scalar()
     
-    async def get_by_field(self, field_name: str, value: Any) -> Optional[Any]:
+    async def get_by_field(self, field_name: str, value: Any) -> Optional[T]:
         """Получение одной записи по полю"""
         session = get_session()
         if hasattr(self.model_class, field_name):

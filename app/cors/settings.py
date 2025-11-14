@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     WEB_APP_URL : str
     SECRET_TOKEN : str
 
+    ADMIN_SECRET_TOKEN : str
+
     @property
     def AsyncDataBaseUrl(self):
         """Url для подключения к базе данных"""

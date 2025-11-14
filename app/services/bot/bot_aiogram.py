@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from cors.settings import settings
 from app.services.database.models.applications import Applications, Users
-from bot.sertalizer import ApplicationSerializer, UserModelSerializetr
+from app.shared.sertalizer import ApplicationSerializer, UserModelSerializetr
 from bot.schem import AplicationRequest, ApplicationScheme, UserSheme
 from bot.views import admin_router
 
@@ -29,6 +29,7 @@ bot = Bot(token=settings.TOKEN_BOT)
 dp = Dispatcher()
 dp.include_router(admin_router)
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,8 +39,7 @@ async def cmd_start(message: Message):
     builder = InlineKeyboardBuilder()
     builder.button(
         text="📱 Открыть приложение", 
-        web_app=WebAppInfo(url=settings.WEB_APP_URL),
-        callback_data="start"
+        web_app=WebAppInfo(url=settings.WEB_APP_URL)
     )
     await message.answer(
         "👋 Привет!\n\n"
@@ -78,7 +78,7 @@ async def delete_webhook():
     logger.info("❌ Вебхук удален")
 
 
-async def send_application_notifications(id, full_name, phone_number, telegram_user_name, **kwargs):
+async def send_application_notifications(id, full_name, phone_number, telegram_user_name):
     """Отпрвляем уведомление админу о новой заявке"""
     inline_keyboard = InlineKeyboardMarkup(
         inline_keyboard=[

@@ -17,3 +17,5 @@ class ApplicationScheme(BaseModel):
     # Telegram данные
     telegram_id: str
     telegram_user_name: str
+
+    status : str

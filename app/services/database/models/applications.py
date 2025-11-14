@@ -21,20 +21,19 @@ class Applications(Base):
     telegram_id: Mapped[str] = mapped_column(String, nullable=False)  
     telegram_user_name: Mapped[str] = mapped_column(String, nullable=False)  
     # metadata
-    is_accepted : Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    is_active : Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    status : Mapped[str] = mapped_column(String, nullable=False, default='active')
+    #is_accepted : Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    #is_active : Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())  
 
     async def accept(self):
         """Принимаем заявку"""
-        self.is_accepted = True
-        self.is_active = False
+        self.status = 'accept'
         await self.save()
     
     async def reject(self):
         """Отклоняем заявку"""
-        self.is_accepted = False
-        self.is_active = False
+        self.status = 'reject'
         await self.save()
 
 
@@ -50,6 +49,7 @@ class Users(Base):
     telegram_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)  
     telegram_user_name: Mapped[str] = mapped_column(String, unique=True, nullable=False)  
     # metadata
+    
     is_active : Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     is_admin : Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     status : Mapped[str] = mapped_column(String, nullable=False , default="Кандидат")

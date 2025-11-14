@@ -10,7 +10,18 @@ class AplicationRequest(BaseModel):
     
 class ApplicationScheme(BaseModel):
     """Схема модели заявки"""
+    id: int
     # Паспортные данные ...
+    full_name: str 
+    phone_number: str
+    # Telegram данные
+    telegram_id: str
+    telegram_user_name: str
+
+    status : str 
+
+
+class ToCreateUser(BaseModel):
     full_name: str 
     phone_number: str
     # Telegram данные

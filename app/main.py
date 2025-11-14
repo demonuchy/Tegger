@@ -3,32 +3,35 @@ import sys
 import asyncio
 import json
 import uvicorn  
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from telethon import events, types
-from sqladmin import Admin, ModelView
+
+from starlette.middleware.sessions import SessionMiddleware
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from aiogram.types import Update
 from services.bot.bot_aiogram import bot, dp, set_webhook, delete_webhook, WEBHOOK_PATH
 
-from services.database.middleware import db_session_middleware
+from services.database.middleware import db_session_middleware, DBSessionMiddleware
 from services.database.config import create_all_tables, drop_all_tables
 from services.database.models.base import Base
 
-from services.application.views import auth_router
+from services.application.views import application_router
 from services.database.config import engine
-from services.admin.setup import AdminSetup
+from services.admin_panel.setup import AdminSetup
+from services.admin_panel.middleware import AdminAuthMiddleware, admin_auth_middleware
+from cors.middlevare import MiddlewareRouter
+from cors.settings import settings
 
 
 async def start_app():
     """Запуск приложения"""
     try:
         print("start server")
-        await create_all_tables()
-        print("Create tables")
+        status = await create_all_tables()
+        print(f"Create tables: {status}")
         await set_webhook()
         print("successful start")
     except Exception as e:
@@ -39,7 +42,6 @@ async def stop_app():
     """Остановка приложения"""
     try: 
         print("stop server")
-        #await drop_all_tables()
         await delete_webhook()
         await bot.session.close()
     except Exception as e:
@@ -57,22 +59,32 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-admin = AdminSetup(app, engine)
 
+#app.add_middleware(AdminAuthMiddleware)
+app.add_middleware(DBSessionMiddleware)
 
-app.middleware("http")(db_session_middleware)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="your-very-secret-key-change-in-production",  # Обязательно измените!
+    session_cookie="sqladmin_session",  # Ваше название куки
+    max_age=3600 * 24,  # 24 часа (настройте по необходимости)
+    https_only=False,  # True для production с HTTPS
+    same_site="lax"
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://bdfront.loca.lt",
-        "https://bdapp.loca.lt"
-        ],
+    allow_origins=["http://localhost:3000","https://bdfront.loca.lt","https://bdapp.loca.lt","https://bereg-dona.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(auth_router)
+
+
+
+
+app.include_router(application_router)
+admin = AdminSetup(app, engine)
 
 @app.post(WEBHOOK_PATH)
 async def bot_webhook(request : Request, update: dict):

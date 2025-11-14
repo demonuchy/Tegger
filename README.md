@@ -1,6 +1,11 @@
 ### COMMIT Bereg Dona v1.1
 
-- Tестовый запуск
+**✨ Основные улучшения:**
+
+- **📝 Система заявок** - Полный цикл подачи и обработки заявок на вступление
+- **⚡ Модерация** - Инструменты для принятия/отклонения заявок администратором  
+- **🎛️ Админ-панель** - Удобный интерфейс для управления заявками
+- **🎨 Современный дизайн** - Чистый и интуитивный пользовательский интерфейс
 
 ## 🛠️ Технологический стек
 
@@ -24,6 +29,15 @@
 <div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" width="30" height="30" />
 </div>
+
+<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlalchemy/sqlalchemy-original.svg" width="30" height="30" style="margin-left: 10px;" />
+</div>
+
+<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="30" height="30" />
+</div>
+
 
 
 ### 📱 Frontend
