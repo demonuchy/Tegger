@@ -1,0 +1,4 @@
+# Только самое необходимое
+Dockerfile
+docker-compose.yml
+.dockerignore

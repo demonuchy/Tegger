@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  react-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - SERVER_HOST=https://bdapi.loca.lt
+      - NODE_ENV=production
