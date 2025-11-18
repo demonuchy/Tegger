@@ -18,7 +18,7 @@ from services.database.middleware import db_session_middleware, DBSessionMiddlew
 from services.database.config import create_all_tables, drop_all_tables
 from services.database.models.base import Base
 
-from services.application.views import application_router
+from services.depends import puplic_router, private_router, admin_router
 from services.database.config import engine
 from services.admin_panel.setup import AdminSetup
 from services.admin_panel.middleware import AdminAuthMiddleware, admin_auth_middleware
@@ -74,22 +74,24 @@ app.add_middleware(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","https://bdfront.loca.lt","https://bdapp.loca.lt","https://bereg-dona.vercel.app"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(puplic_router)
+app.include_router(private_router)
+app.include_router(admin_router)
 
-
-
-app.include_router(application_router)
 admin = AdminSetup(app, engine)
+
 
 @app.post(WEBHOOK_PATH)
 async def bot_webhook(request : Request, update: dict):
     """Обработка всех событий бота"""
     try:
+        print(request.headers)
         telegram_update = Update(**update)
         await dp.feed_webhook_update(bot, telegram_update)
         return {"status": "ok"}

@@ -13,14 +13,22 @@ class Settings(BaseSettings):
     DB_NAME : str
     DB_PORT : int
 
+
     API_ID : str
     API_HASH : str
     TOKEN_BOT : str
+    WEBHOOK_SECRET_TOKEN : str
+
+
     WEBHOOK_TUNNEL_URL : str
     WEB_APP_URL : str
-    SECRET_TOKEN : str
 
+    
     ADMIN_SECRET_TOKEN : str
+
+
+    TOKEN_ENCODE_ALGORITHM : str
+    JWT_SECRET_KEY : str
 
     @property
     def AsyncDataBaseUrl(self):

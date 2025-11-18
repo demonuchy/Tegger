@@ -10,7 +10,7 @@ from application.schem import AplicationRequest, ApplicationScheme
 from services.bot.bot_aiogram import send_application_notifications, send_message
 from app.services.database.models.applications import Applications, Users
 from app.services.database.models.admin import Admins
-from app.shared.sertalizer import ApplicationSerializer, ApplicationModelSerealizer
+
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 

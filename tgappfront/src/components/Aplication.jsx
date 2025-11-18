@@ -146,6 +146,7 @@ const Application = () => {
   }, [user, aplicationRequest, validatePhone, validateFullName, claenForm, showErrorAnimation]);
 
   useEffect(() => {
+    
     if(!isLoading){
       setupMainButton("Отправить заявку", handlerSubmitMainButton, {color: "#e68a00", textColor: "#ffffff"});
     }

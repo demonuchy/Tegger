@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from cors.settings import settings
 from app.services.database.models.applications import Applications, Users
-from app.shared.sertalizer import ApplicationSerializer, UserModelSerializetr
+
 from bot.schem import AplicationRequest, ApplicationScheme, UserSheme
 from bot.views import admin_router
 
@@ -55,8 +55,6 @@ async def parse_data(message: types.Message):
     if applications and any(application.is_active for application in applications):
         return await message.answer("Вы уже отправили заявку")
     application = await Applications.objects.create(**data.model_dump())
-    appication_serializer = ApplicationSerializer()
-    application = appication_serializer.dump(application)
     await send_application_notifications(**application)
     return await message.answer("Отлично заявка отправлена\nЖдем одобрения")
 
@@ -65,7 +63,7 @@ async def set_webhook():
     """Установка вебхука"""
     await bot.set_webhook(
         url=WEBHOOK_URL,
-        secret_token=settings.SECRET_TOKEN,
+        secret_token=settings.WEBHOOK_SECRET_TOKEN,
         drop_pending_updates=True,
         allowed_updates=["message", "callback_query", "web_app_data"]
     )

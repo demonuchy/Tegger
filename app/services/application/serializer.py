@@ -1,0 +1,15 @@
+import os
+import sys
+from marshmallow import fields
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app.services.database.models.applications import Applications
+
+
+class ApplicationModelSerializetr(SQLAlchemyAutoSchema):
+    """Сереалайзер в pydantic модель для модели заявки """
+    class Meta:
+        model = Applications
+        load_instance = True

@@ -1,11 +1,11 @@
 // src/App.js
 import React from 'react';
 import Application from './components/Aplication';
-import AdminApplications from './components/AdminApplication';
+import Home from './components/Home';
 import './App.css';
 
 function App() {
-  return <AdminApplications />;
+  return <Home/>;
 }
 
 export default App;

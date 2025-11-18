@@ -26,8 +26,6 @@ async def db_session_middleware(request: Request, call_next):
             await session.close()
 
 
-
-
 class DBSessionMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         print("🔍 1. DBSessionMiddleware: устанавливаю сессию")

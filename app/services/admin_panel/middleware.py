@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from application.schem import AplicationRequest, ApplicationScheme
 from services.bot.bot_aiogram import send_application_notifications, send_message
 from app.services.database.models.applications import Applications, Users
-from app.shared.sertalizer import ApplicationSerializer, ApplicationModelSerealizer
+
 from services.database.context import set_session, reset_session
 from services.database.config import async_session
 

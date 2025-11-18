@@ -2,21 +2,22 @@ import os
 import sys
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from typing import Optional
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from application.schem import AplicationRequest
 from services.bot.bot_aiogram import send_application_notifications, send_message
 from app.services.database.models.applications import Applications, Users
+from app.services.application.serializer import ApplicationModelSerializetr
 
-
-application_router = APIRouter(prefix="/api/application", tags=["application"])
+application_router = APIRouter(prefix="/application")
 
 
 @application_router.post('')
-async def submit(data : AplicationRequest):
+async def submit_application(data : AplicationRequest):
     """Хук для отправки заявки"""
-    user = await Users.objects.exists(telegram_id = data.telegram_id)
+    user  : Optional[Users] = await Users.objects.exists(telegram_id = data.telegram_id)
     if user:
         await send_message(data.telegram_id, "Вы уже зарегестрированы")
         return JSONResponse(content={"details" : "Пользователь уже существует"}, status_code=400)
@@ -33,4 +34,51 @@ async def submit(data : AplicationRequest):
                                     )
     await send_message(application.telegram_id, "✅ Заявка отправлена\nВам придет уведомление когда заявка будет рассмотрена")
     return JSONResponse(content={"details" : "ваша заявка отправлена"}, status_code=200)
+    
+
+admin_application_router = APIRouter(prefix="/application")
+
+
+
+@admin_application_router.get('')
+async def view_active_application(status : str):
+    """получаем все заявки по статусу"""
+    applications = await Applications.objects.filter(status = status)
+    if not applications:
+        return JSONResponse({"details" : "Активных заявок пока нет"}, status_code=404)
+    application_serializer = ApplicationModelSerializetr()
+    applications : dict = application_serializer.dump(applications, many=True)
+    return JSONResponse({"details" : "ok", "applications" : applications}, status_code=200)
+
+
+@admin_application_router.patch('/{application_id}')
+async def change_status_application(application_id : int, status : str):
+    """Меняем статус заявк принимаем либо откланяем"""
+    application : Optional[Applications] = await Applications.objects.get(application_id)
+    if not application:
+        return JSONResponse({'details':'заявка не найдена'}, status_code=404)
+    if application.status != 'active':
+        print('заявка не активна')
+        return JSONResponse({'details':'заявка не активна'}, status_code=400)
+    if status == 'accept':
+        user = await Users.objects.exists(telegram_id = application.telegram_id)
+        if user: 
+            await application.reject()
+            print('Пользователь уже зарегестрирован')
+            return JSONResponse({'details':'Пользователь уже зарегестрирован'}, status_code=400)
+        await Users.objects.create(
+            full_name=application.full_name, 
+            phone_number=application.phone_number, 
+            telegram_id=application.telegram_id, 
+            telegram_user_name=application.telegram_user_name
+            )
+        await send_message(application.telegram_id, "Ваша заявка принята")
+    elif status == 'reject': 
+        await send_message(application.telegram_id, "К сожалению ваша заявка отклонена")
+    else: 
+        print('неверный статус')
+        return JSONResponse({"details":"неверный статус"}, status_code=400)
+    application.status = status
+    await application.save()
+    return JSONResponse({'details': 'ok'}, status_code=200)
     
