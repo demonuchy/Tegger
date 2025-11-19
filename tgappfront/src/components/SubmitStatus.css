@@ -1,62 +1,258 @@
-/* Большой серый спиннер */
+/* SubmitStatus.css */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2rem;
+  max-width: 300px;
+  width: 90%;
+}
+
+.status-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  animation: scaleIn 0.5s ease-out;
+}
+
+/* Большой спиннер загрузки */
 .big-gray-spinner {
-    width: 80px;
-    height: 80px;
-    border: 8px solid rgba(255, 165, 0, 0.3);
-    border-top: 8px solid #ffa500;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  
-  .success-checkmark {
-    width: 80px;
-    height: 80px;
-    background: #4CAF50;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    animation: scaleIn 0.5s ease-out;
+  width: 80px;
+  height: 80px;
+  border: 6px solid rgba(255, 255, 255, 0.1);
+  border-top: 6px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+  position: relative;
+}
 
-    box-shadow: 0 0 20px 5px rgba(76, 175, 80, 0.6);
+.big-gray-spinner::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border: 6px solid transparent;
+  border-top: 6px solid rgba(255, 165, 0, 0.3);
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite reverse;
+}
+
+/* Успешная галочка */
+.success-checkmark {
+  width: 80px;
+  height: 80px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000;
+  animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 8px 25px rgba(255, 165, 0, 0.4);
+  position: relative;
+}
+
+.success-checkmark::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: ripple 1s ease-out infinite;
+}
+
+/* Ошибочный крестик */
+.error-cross {
+  width: 80px;
+  height: 80px;
+  background: var(--accent-error);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #fff;
+  animation: errorShake 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  position: relative;
+}
+
+.error-cross::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid var(--accent-error);
+  border-radius: 50%;
+  animation: ripple 1s ease-out infinite;
+}
+
+/* Сообщение статуса */
+.status-message {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1rem;
+  animation: slideUp 0.5s ease-out 0.3s both;
+}
+
+.status-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+  animation: slideUp 0.5s ease-out 0.5s both;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes successPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes errorShake {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+  .loading {
+    padding: 1.5rem;
+    max-width: 250px;
   }
   
+  .big-gray-spinner,
+  .success-checkmark,
   .error-cross {
-    width: 80px;
-    height: 80px;
-    background: #f44336;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    animation: scaleIn 0.5s ease-out;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .success-checkmark,
+  .error-cross {
+    font-size: 2rem;
+  }
+  
+  .status-message {
+    font-size: 1.1rem;
+  }
+  
+  .status-description {
+    font-size: 0.85rem;
+  }
+}
 
-    box-shadow: 0 0 20px 5px rgba(244, 67, 54, 0.6);
-  }
-  
-  /* Анимации */
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  @keyframes scaleIn {
-    0% { transform: scale(0); opacity: 0; }
-    70% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  
-  /* Контейнер статуса */
-  .status-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
+/* Дополнительные состояния для разных типов сообщений */
+.status-indicator.loading .status-message {
+  color: var(--text-primary);
+}
+
+.status-indicator.success .status-message {
+  color: var(--primary);
+}
+
+.status-indicator.error .status-message {
+  color: var(--accent-error);
+}

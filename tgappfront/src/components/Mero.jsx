@@ -1,5 +1,4 @@
 import React from 'react';
-import './Mero.css'
 
 const EventsList = () => {
     const events = [
@@ -9,14 +8,14 @@ const EventsList = () => {
     ];
   
     return (
-      <div className="events-list">
-        <div className="events">
+      <div className="events-wrapper">
+        <div className="events-grid">
           {events.map(event => (
-            <div key={event.id} className="event-card">
+            <div key={event.id} className="event-item">
               <h3>{event.title}</h3>
               <p>📅 Дата: {event.date}</p>
               <p>📍 Место: {event.location}</p>
-              <button className="event-button">Участвовать</button>
+              <button className="join-button">Участвовать</button>
             </div>
           ))}
         </div>
@@ -24,5 +23,4 @@ const EventsList = () => {
     );
   };
 
-
-  export default EventsList
+export default EventsList;

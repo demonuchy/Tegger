@@ -32,7 +32,7 @@ const useApi = () => {
         console.error('API Error:', error);
         return false;
       }
-    }, [domain]);
+    }, [domain, initData]);
 
     const getMeRequest = useCallback(async (telegramId) => {
       try {
@@ -59,7 +59,7 @@ const useApi = () => {
         console.error('API Error:', error);
         return null;
       }
-    },[domain])
+    },[domain, initData])
 
     const getActiveApplications = useCallback(async (status = "active") => {
       try {
@@ -84,7 +84,7 @@ const useApi = () => {
         console.error('API Error:', error);
         throw error;
       }
-    }, [domain]);
+    }, [domain, initData]);
   
     const updateApplicationStatus = useCallback(async (applicationId, status) => {
       try {
@@ -113,7 +113,7 @@ const useApi = () => {
         console.error('API Error:', error);
         throw error;
       }
-    }, [domain]);
+    }, [domain, initData]);
     return { aplicationRequest, getMeRequest, getActiveApplications, updateApplicationStatus };
   };
 

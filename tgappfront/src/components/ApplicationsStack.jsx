@@ -1,7 +1,6 @@
 import React, { useState, memo, useEffect, useRef } from 'react';
 import useApi from '../hooks/useAPI';
 import { useTelegram } from '../hooks/useTelegramAPI';
-import './ApplicationStack.css';
 
 const Applications = () => {
     const { getActiveApplications, updateApplicationStatus } = useApi();
@@ -41,15 +40,11 @@ const Applications = () => {
   
     const handleUpdateStatus = async (applicationId, status) => {
       try {
-        // Оптимистичное обновление - сразу удаляем карточку из стека
         setApplications(prev => prev.filter(app => app.id !== applicationId));
         
-        // Отправляем запрос на сервер в фоне (не ждем ответа)
         updateApplicationStatus(applicationId, status).catch(error => {
           console.error('Error updating application status:', error);
-          // В случае ошибки можно показать уведомление или попробовать снова
           alert('Не удалось обновить статус заявки на сервере');
-          // Можно добавить логику для повторной отправки или восстановления состояния
         });
       } catch (error) {
         console.error('Error in handleUpdateStatus:', error);
@@ -77,23 +72,23 @@ const Applications = () => {
   
     if (isLoading) {
       return (
-      <div className="loading-screen">
-        <div className="loading">
-          <div className="orange-spinner"></div>
-          <p>Загрузка...</p>
+        <div className="page-loader">
+          <div className="loader-content">
+            <div className="loader-spinner"></div>
+            <p className="loader-text">Загрузка...</p>
+          </div>
         </div>
-      </div>
       );
     }
   
     if (error) {
       return (
-        <div className="applications-container">
-          <div className="applications-error">
-            <div className="error-icon">⚠️</div>
-            <h3>Ошибка загрузки</h3>
-            <p>{error}</p>
-            <button onClick={fetchApplications} className="retry-button">
+        <div className="applications-wrapper">
+          <div className="error-wrapper">
+            <div className="error-symbol">⚠️</div>
+            <h3 className="error-heading">Ошибка загрузки</h3>
+            <p className="error-description">{error}</p>
+            <button onClick={fetchApplications} className="action-button">
               Попробовать снова
             </button>
           </div>
@@ -102,44 +97,41 @@ const Applications = () => {
     }
   
     return (
-      <div className="applications-container">
-        <div className="applications-header">
+      <div className="applications-wrapper">
+        <div className="applications-top">
           <div className="applications-count">
             На рассмотрении: {applications.length} заявок
           </div>
-          <p className="applications-hint">
+          <p className="applications-tip">
             Свайпните влево для отклонения или вправо для принятия
           </p>
         </div>
   
-        <div className="applications-stack">
+        <div className="cards-stack">
           {applications.length === 0 ? (
-            <div className="empty-applications">
-              <div className="empty-icon">📭</div>
+            <div className="empty-state">
+              <div className="empty-symbol">📭</div>
               <h3>Заявок пока нет</h3>
               <p>Новые заявки появятся здесь</p>
             </div>
           ) : (
-            <div className="stack-container">
-              {applications.map((application, index) => (
-                <ApplicationCard
-                  key={application.id}
-                  application={application}
-                  index={index}
-                  total={applications.length}
-                  onSwipe={handleUpdateStatus}
-                  formatDate={formatDate}
-                  getStatusText={getStatusText}
-                />
-              ))}
-            </div>
+            applications.map((application, index) => (
+              <ApplicationCard
+                key={application.id}
+                application={application}
+                index={index}
+                total={applications.length}
+                onSwipe={handleUpdateStatus}
+                formatDate={formatDate}
+                getStatusText={getStatusText}
+              />
+            ))
           )}
         </div>
       </div>
     );
   };
 
-// Компонент карточки заявки
 const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
@@ -211,13 +203,11 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
         if (Math.abs(position.x) > swipeThreshold) {
             setIsRemoving(true);
             
-            // Немедленно вызываем колбэк для удаления карточки
             setTimeout(() => {
                 const status = swipeDirection === 'right' ? 'accept' : 'reject';
                 onSwipe(application.id, status);
-            }, 150); // Уменьшаем задержку для более быстрого отклика
+            }, 150);
         } else {
-            // Возвращаем карточку на место
             setPosition({ x: 0, y: 0 });
             setSwipeDirection(null);
         }
@@ -229,23 +219,21 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
             return {
                 transform: `translateX(${translateX}px) rotate(${position.x * 0.2}deg)`,
                 opacity: Math.max(0, 1 - Math.abs(position.x) / 200),
-                transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)', // Ускоряем анимацию
+                transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 zIndex: 1000,
             };
         }
 
-        // Стандартные стили для стопки
         const baseScale = 1 - (index * 0.03);
         const baseTranslateY = index * 12;
         const scale = index === 0 ? 1 : baseScale;
         const translateY = index === 0 ? 0 : baseTranslateY;
 
-        // Для активной (верхней) карточки добавляем свайп
         const swipeTransform = index === 0 ? `translateX(${position.x}px) rotate(${position.x * 0.1}deg)` : '';
 
         return {
             transform: `${swipeTransform} translateY(${translateY}px) scale(${scale})`,
-            transition: isDragging && index === 0 ? 'none' : 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)', // Ускоряем переходы
+            transition: isDragging && index === 0 ? 'none' : 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             opacity: 1,
             zIndex: total - index,
             cursor: index === 0 ? (isDragging ? 'grabbing' : 'grab') : 'default',
@@ -264,13 +252,12 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
         }
     };
 
-    // Показываем только верхние 5 карточек
     if (index >= 5) return null;
 
     return (
         <div 
             ref={dragRef}
-            className={`application-card-stack ${swipeDirection ? `swipe-${swipeDirection}` : ''} ${isRemoving ? 'removing' : ''}`}
+            className={`stack-item ${swipeDirection ? 'swiping' : ''} ${isRemoving ? 'removing' : ''}`}
             style={{
                 ...getCardStyle(),
                 touchAction: index === 0 ? 'pan-y' : 'auto',
@@ -279,43 +266,41 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
             onTouchMove={index === 0 ? handleTouchMove : undefined}
             onTouchEnd={index === 0 ? handleTouchEnd : undefined}
         >
-            {/* Градиентный оверлей при свайпе (только для верхней карточки) */}
             {index === 0 && (
                 <div 
-                    className="swipe-overlay"
+                    className="swipe-highlight"
                     style={{
                         background: getOverlayGradient(),
                     }}
                 />
             )}
             
-            {/* Индикаторы свайпа (только для верхней карточки) */}
             {index === 0 && (
                 <>
-                    <div className={`swipe-indicator left ${position.x < -50 ? 'visible' : ''}`}>
-                        <div className="indicator-icon">👎</div>
-                        <div className="indicator-text">Отклонить</div>
+                    <div className={`swipe-hint left ${position.x < -50 ? 'visible' : ''}`}>
+                        <div className="hint-icon">👎</div>
+                        <div className="hint-text">Отклонить</div>
                     </div>
                     
-                    <div className={`swipe-indicator right ${position.x > 50 ? 'visible' : ''}`}>
-                        <div className="indicator-icon">👍</div>
-                        <div className="indicator-text">Принять</div>
+                    <div className={`swipe-hint right ${position.x > 50 ? 'visible' : ''}`}>
+                        <div className="hint-icon">👍</div>
+                        <div className="hint-text">Принять</div>
                     </div>
                 </>
             )}
 
-            <div className="card-content">
-                <div className="card-header">
-                    <div className="user-info">
-                        <h3 className="user-name">{application.full_name}</h3>
-                        <div className="user-contacts">
-                            <span className="contact-item">
-                                <span className="contact-icon">📱</span>
+            <div>
+                <div className="card-top">
+                    <div>
+                        <h3 className="card-name">{application.full_name}</h3>
+                        <div className="card-contacts">
+                            <span className="contact-line">
+                                <span className="contact-symbol">📱</span>
                                 {application.phone_number}
                             </span>
                             {application.telegram_user_name && (
-                                <span className="contact-item">
-                                    <span className="contact-icon">👤</span>
+                                <span className="contact-line">
+                                    <span className="contact-symbol">👤</span>
                                     @{application.telegram_user_name}
                                 </span>
                             )}
@@ -323,21 +308,21 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                     </div>
                 </div>
 
-                <div className="application-details">
-                    <div className="detail-row">
-                        <span className="detail-label">Дата заявки:</span>
+                <div className="card-details">
+                    <div className="detail-line">
+                        <span className="detail-name">Дата заявки:</span>
                         <span className="detail-value">{formatDate(application.created_at)}</span>
                     </div>
-                    <div className="detail-row">
-                        <span className="detail-label">Статус:</span>
-                        <span className="status-badge">
+                    <div className="detail-line">
+                        <span className="detail-name">Статус:</span>
+                        <span className="status-tag">
                             {getStatusText(application.status)}
                         </span>
                     </div>
                     {application.comment && (
-                        <div className="detail-row">
-                            <span className="detail-label">Комментарий:</span>
-                            <span className="detail-value comment">{application.comment}</span>
+                        <div className="detail-line">
+                            <span className="detail-name">Комментарий:</span>
+                            <span className="detail-value">{application.comment}</span>
                         </div>
                     )}
                 </div>
