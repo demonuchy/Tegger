@@ -2,7 +2,7 @@ import os
 import sys
 from typing import Any, Callable, Dict, Awaitable, Optional
 from aiogram import F, BaseMiddleware, Router
-from aiogram.types import  CallbackQuery, Update, Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import  CallbackQuery, Update, Message, InlineKeyboardMarkup, InlineKeyboardButton, BufferedInputFile
 from aiogram.filters import Command
 
 
@@ -10,7 +10,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 from app.services.database.models.applications import Applications, Users
-
+from app.services.bot.serializer import UserModelSerializer
+from app.utils.excel_conventor import convert_to_excel, convert_to_excel_buffer
 
 admin_router = Router()
 
@@ -32,12 +33,25 @@ class AdminMiddleware(BaseMiddleware):
     
 
 admin_router.message.middleware(AdminMiddleware())
-admin_router.callback_query.middleware(AdminMiddleware())
+#admin_router.callback_query.middleware(AdminMiddleware())
 
 
-@admin_router.message(Command("application"))
-async def get_active_application(message : Message):
-    pass
+@admin_router.message(Command('excel'))
+async def admin_panel(message: Message):
+    users = await Users.objects.filter()
+    user_serializer = UserModelSerializer()
+    serialize_user = user_serializer.dump(users, many=True)
+    print(list(user_serializer.fields.keys()))
+    print([list(user.values()) for user in serialize_user])
+    excel_buffer = convert_to_excel_buffer(
+        colums_name=list(user_serializer.fields.keys()), 
+        data=[list(user.values()) for user in serialize_user]
+    )
+    document = BufferedInputFile(
+        excel_buffer.getvalue(), 
+        filename="users_data.xlsx"
+    )
+    await message.answer_document(document)
 
 
 @admin_router.message(Command('admin'))

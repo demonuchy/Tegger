@@ -19,7 +19,7 @@ const PersonalCabinet = () => {
       <div className="profile-card">
         <div className="profile-image">
           <div className="image-placeholder">
-            {userData?.full_name?.charAt(0) || telegramUser?.first_name?.charAt(0) || 'U'}
+            <img src={telegramUser.photo_url} alt="Avatar" />
           </div>
         </div>
         

@@ -1,17 +1,27 @@
-import React, { useState, memo, useEffect, useRef } from 'react';
+import React, { useState, memo, useEffect, useRef, useContext, useCallback } from 'react';
 import useApi from '../hooks/useAPI';
-import { useTelegram } from '../hooks/useTelegramAPI';
+;
 
 const Applications = () => {
     const { getActiveApplications, updateApplicationStatus } = useApi();
     const [applications, setApplications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isRollup, setIsRollup] = useState(false)
   
     useEffect(() => {
       fetchApplications();
     }, []);
+
+    const rollupOnClicKHandler = useCallback(()=>{
+      if(isRollup){
+        setIsRollup(false)
+        return
+      }
+      setIsRollup(true)
+    }, [isRollup, setIsRollup])
   
+
     const fetchApplications = async () => {
       try {
         setIsLoading(true);
@@ -106,7 +116,10 @@ const Applications = () => {
             Свайпните влево для отклонения или вправо для принятия
           </p>
         </div>
-  
+        <div className='cards-stack-wrapper' style={{ height : isRollup ?  `${applications.length * 30}vh` : '55vh'}}>
+          <div className='rollup-button'>
+            <button onClick={rollupOnClicKHandler}>{isRollup ? 'Свернуть ': "Pазвернуть"}</button>
+          </div>
         <div className="cards-stack">
           {applications.length === 0 ? (
             <div className="empty-state">
@@ -124,15 +137,17 @@ const Applications = () => {
                 onSwipe={handleUpdateStatus}
                 formatDate={formatDate}
                 getStatusText={getStatusText}
+                isRollUp={isRollup}
               />
             ))
           )}
+        </div>
         </div>
       </div>
     );
   };
 
-const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText }) => {
+const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText, isRollUp }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [swipeDirection, setSwipeDirection] = useState(null);
@@ -213,7 +228,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
         }
     };
 
-    const getCardStyle = () => {
+    const getCardStyle = (offsetY) => {
         if (isRemoving) {
             const translateX = swipeDirection === 'right' ? window.innerWidth : -window.innerWidth;
             return {
@@ -223,13 +238,23 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                 zIndex: 1000,
             };
         }
-
+        
         const baseScale = 1 - (index * 0.03);
-        const baseTranslateY = index * 12;
+        const baseTranslateY = index * offsetY;
         const scale = index === 0 ? 1 : baseScale;
         const translateY = index === 0 ? 0 : baseTranslateY;
 
         const swipeTransform = index === 0 ? `translateX(${position.x}px) rotate(${position.x * 0.1}deg)` : '';
+        if(isRollUp){
+          return {
+            position : 'relative',
+            transform: `${swipeTransform} translateY(${translateY}px) scale(1)`,
+            transition: isDragging && index === 0 ? 'none' : 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            opacity: 1,
+            zIndex: total - index,
+            cursor: index === 0 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+        };
+        }
 
         return {
             transform: `${swipeTransform} translateY(${translateY}px) scale(${scale})`,
@@ -259,7 +284,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
             ref={dragRef}
             className={`stack-item ${swipeDirection ? 'swiping' : ''} ${isRemoving ? 'removing' : ''}`}
             style={{
-                ...getCardStyle(),
+                ...getCardStyle(12),
                 touchAction: index === 0 ? 'pan-y' : 'auto',
             }}
             onTouchStart={index === 0 ? handleTouchStart : undefined}

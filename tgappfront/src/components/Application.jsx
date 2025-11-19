@@ -1,4 +1,5 @@
 // components/Application.js
+// react-dadata библиотека для подсказки адресов 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useTelegram } from '../hooks/useTelegramAPI';
 import useApi from '../hooks/useAPI';
