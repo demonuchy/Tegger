@@ -27,10 +27,11 @@ const Applications = () => {
     const rollupOnClicKHandler = useCallback(()=>{
       if(isRollup){
         setIsRollup(false)
+        setExpandCardId(null)
         return
       }
       setIsRollup(true)
-    }, [isRollup, setIsRollup])
+    }, [isRollup, setIsRollup, setExpandCardId])
   
     const fetchApplications = async () => {
       try {
@@ -169,6 +170,9 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     const isHorizontalSwipeRef = useRef(false);
 
     const onClickHandler = () =>{
+      if(!isRollUp && index !== 0){
+        return
+      }
       onExpand(application.id)
     }
 
