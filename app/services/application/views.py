@@ -1,6 +1,6 @@
 import os
 import sys
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.responses import JSONResponse
 from typing import Optional
 
@@ -10,6 +10,9 @@ from application.schem import AplicationRequest
 from services.bot.bot_aiogram import send_application_notifications, send_message
 from app.services.database.models.applications import Applications, Users
 from app.services.application.serializer import ApplicationModelSerializetr
+from app.services.depends import handle_errors
+from app.services.depends import get_application_service
+from app.services.application.service import ApplicationService
 
 application_router = APIRouter(prefix="/application")
 
@@ -81,4 +84,39 @@ async def change_status_application(application_id : int, status : str):
     application.status = status
     await application.save()
     return JSONResponse({'details': 'ok'}, status_code=200)
+
+
+
+
+public_application_router_v2 = APIRouter(prefix="/application/v2")
+
+
+@public_application_router_v2.post('')
+@handle_errors('/')
+async def submit_an_application(service : ApplicationService = Depends(get_application_service), background : BackgroundTasks = BackgroundTasks):
+    pass
+
+
+
+
+admin_application_router_v2 = APIRouter(prefix="/application/v2")
+
+
+@admin_application_router_v2.patch('/{application_id}/accept')
+@handle_errors('/{application_id}/accept')
+async def accept_application(service : ApplicationService = Depends(get_application_service), background : BackgroundTasks = BackgroundTasks):
+    pass
+
+
+@admin_application_router_v2.patch('/{application_id}/reject')
+@handle_errors('/{application_id}/reject')
+async def reject_application(service : ApplicationService = Depends(get_application_service), background : BackgroundTasks = BackgroundTasks):
+    pass
+
+
+@admin_application_router_v2.get('')
+@handle_errors('/')
+async def get_applications_by_status(service : ApplicationService = Depends(get_application_service)):
+    pass
+
     

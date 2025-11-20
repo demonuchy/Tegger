@@ -18,7 +18,7 @@ from services.database.middleware import db_session_middleware, DBSessionMiddlew
 from services.database.config import create_all_tables, drop_all_tables
 from services.database.models.base import Base
 
-from services.depends import puplic_router, private_router, admin_router
+from services.auth.views import  puplic_router, private_router, admin_router
 from services.database.config import engine
 from services.admin_panel.setup import AdminSetup
 from services.admin_panel.middleware import AdminAuthMiddleware, admin_auth_middleware

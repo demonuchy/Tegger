@@ -1,6 +1,6 @@
 import os
 import sys
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from typing import Optional
 
@@ -8,6 +8,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.database.models.applications import  Users
 from app.services.user.serializer import UserModelSerializer
+from app.services.depends import get_user_service
+from app.services.user.service import UserService
 
 
 
@@ -33,6 +35,19 @@ async def pre_check_user(telegram_id : str):
     user_serializer = UserModelSerializer()
     user : dict = user_serializer.dump(user)
     return JSONResponse({"details" : "Пользователь найден", "user" : user}, status_code=200)
+
+
+
+
+
+
+private_user_router_v2 = APIRouter(prefix="/users/v2")
+
+
+@private_user_router_v2.get("/me")
+async def get_me(service : UserService = Depends(get_user_service)):
+    pass
+
 
 
 
