@@ -116,9 +116,9 @@ const Applications = () => {
             Свайпните влево для отклонения или вправо для принятия
           </p>
         </div>
-        <div className='cards-stack-wrapper' style={{ height : isRollup ?  `${applications.length * 30}vh` : '55vh'}}>
+        <div className='cards-stack-wrapper' style={{ height : isRollup ?  `${applications.length * 40}vh` : '55vh'}}>
           <div className='rollup-button'>
-            <button onClick={rollupOnClicKHandler}>{isRollup ? 'Свернуть ': "Pазвернуть"}</button>
+          {applications.length > 1 && (<button onClick={rollupOnClicKHandler}>{isRollup ? 'Свернуть ': "Pазвернуть"}</button>)}
           </div>
         <div className="cards-stack">
           {applications.length === 0 ? (
@@ -138,6 +138,7 @@ const Applications = () => {
                 formatDate={formatDate}
                 getStatusText={getStatusText}
                 isRollUp={isRollup}
+                applications={applications}
               />
             ))
           )}
@@ -147,14 +148,23 @@ const Applications = () => {
     );
   };
 
-const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText, isRollUp }) => {
+const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText, isRollUp, applications }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [swipeDirection, setSwipeDirection] = useState(null);
     const [isRemoving, setIsRemoving] = useState(false);
+    const [isWrap, setIsWrap] = useState(false)
     const dragRef = useRef(null);
     const startPos = useRef({ x: 0, y: 0 });
     const isHorizontalSwipeRef = useRef(false);
+
+    const onCickCardHandler = useCallback(()=>{
+      if(isWrap){
+        setIsWrap(false)
+        return
+      }
+      setIsWrap(true)
+    },[isWrap, setIsWrap])
 
     const handleTouchStart = (e) => {
         if (isRemoving || index !== 0) return;
@@ -172,7 +182,12 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     };
 
     const handleTouchMove = (e) => {
-        if (!isDragging || isRemoving || index !== 0) return;
+        if(isRollUp && index!==0){
+          return;
+        }
+        if (!isDragging || isRemoving ) {
+          return;
+        }
         
         const touch = e.touches[0];
         const currentX = touch.clientX;
@@ -246,10 +261,11 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
 
         const swipeTransform = index === 0 ? `translateX(${position.x}px) rotate(${position.x * 0.1}deg)` : '';
         if(isRollUp){
+          //setIsWrap(false)
           return {
             position : 'relative',
             transform: `${swipeTransform} translateY(${translateY}px) scale(1)`,
-            transition: isDragging && index === 0 ? 'none' : 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: isDragging && index === 0 ? 'none' : 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             opacity: 1,
             zIndex: total - index,
             cursor: index === 0 ? (isDragging ? 'grabbing' : 'grab') : 'default',
@@ -287,6 +303,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                 ...getCardStyle(12),
                 touchAction: index === 0 ? 'pan-y' : 'auto',
             }}
+            onClick={onCickCardHandler}
             onTouchStart={index === 0 ? handleTouchStart : undefined}
             onTouchMove={index === 0 ? handleTouchMove : undefined}
             onTouchEnd={index === 0 ? handleTouchEnd : undefined}
@@ -329,6 +346,11 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                                     @{application.telegram_user_name}
                                 </span>
                             )}
+                            {isWrap && (<span className="contact-line">
+                                    <span className="contact-symbol">6</span>
+                                    Писи попы какашечки 
+                                </span>
+                                )}
                         </div>
                     </div>
                 </div>
