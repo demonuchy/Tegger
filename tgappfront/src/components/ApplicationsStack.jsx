@@ -8,10 +8,24 @@ const Applications = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isRollup, setIsRollup] = useState(false)
+
+    const [expandCardId, setExpandCardId] = useState(null)
+
+    
   
     useEffect(() => {
       fetchApplications();
     }, []);
+
+    const handleCardExpand = useCallback((cardId) => {
+      setExpandCardId(prev => {
+        // Если нажимаем на уже развернутую карточку - закрываем
+        if (prev === cardId) return null;
+        // Иначе открываем новую карточку
+        return cardId;
+      });
+    }, [setExpandCardId]);
+
 
     const rollupOnClicKHandler = useCallback(()=>{
       if(isRollup){
@@ -138,7 +152,8 @@ const Applications = () => {
                 formatDate={formatDate}
                 getStatusText={getStatusText}
                 isRollUp={isRollup}
-                applications={applications}
+                isExpand={expandCardId === application.id}
+                onExpand={handleCardExpand}
               />
             ))
           )}
@@ -148,23 +163,22 @@ const Applications = () => {
     );
   };
 
-const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText, isRollUp, applications }) => {
+const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText, isRollUp, isExpand, onExpand }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [swipeDirection, setSwipeDirection] = useState(null);
     const [isRemoving, setIsRemoving] = useState(false);
-    const [isWrap, setIsWrap] = useState(false)
+    
+ 
     const dragRef = useRef(null);
     const startPos = useRef({ x: 0, y: 0 });
     const isHorizontalSwipeRef = useRef(false);
 
-    const onCickCardHandler = useCallback(()=>{
-      if(isWrap){
-        setIsWrap(false)
-        return
-      }
-      setIsWrap(true)
-    },[isWrap, setIsWrap])
+
+    const onClickHandler = () =>{
+      onExpand(application.id)
+    }
+
 
     const handleTouchStart = (e) => {
         if (isRemoving || index !== 0) return;
@@ -303,7 +317,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                 ...getCardStyle(12),
                 touchAction: index === 0 ? 'pan-y' : 'auto',
             }}
-            onClick={onCickCardHandler}
+            onClick={onClickHandler}
             onTouchStart={index === 0 ? handleTouchStart : undefined}
             onTouchMove={index === 0 ? handleTouchMove : undefined}
             onTouchEnd={index === 0 ? handleTouchEnd : undefined}
@@ -346,7 +360,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                                     @{application.telegram_user_name}
                                 </span>
                             )}
-                            {isWrap && (<span className="contact-line">
+                            {isExpand && (<span className="contact-line">
                                     <span className="contact-symbol">6</span>
                                     Писи попы какашечки 
                                 </span>
