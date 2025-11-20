@@ -346,7 +346,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                             
                             <CSSTransition
                                 in={isExpand}
-                                timeout={400}
+                                timeout={300}
                                 classNames="expand-content"
                                 unmountOnExit
                                 nodeRef={contentRef}

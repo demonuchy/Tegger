@@ -582,36 +582,33 @@ body {
   padding: 16px;
   transition: all 0.4s linear;
   overflow: hidden;
+  transition: height 0.4s linear;
 }
 
 .stack-item.expanded {
-  transition: all 0.4s linear;
+  transition: height 0.4s linear;
 }
 
 /* Анимации для расширенного контента */
 .expand-content-enter {
   max-height: 0;
   opacity: 0;
-  transform: translateY(-10px);
 }
 
 .expand-content-enter-active {
   max-height: 200px;
   opacity: 1;
-  transform: translateY(0);
   transition: all 400ms linear;
 }
 
 .expand-content-exit {
   max-height: 200px;
   opacity: 1;
-  transform: translateY(0);
 }
 
 .expand-content-exit-active {
   max-height: 0;
   opacity: 0;
-  transform: translateY(-10px);
   transition: all 400ms linear;
 }
 
