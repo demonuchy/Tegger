@@ -500,6 +500,9 @@ body {
 
 /* === КОМПОНЕНТ ЗАЯВОК === */
 
+
+
+
 .applications-wrapper {
   padding: 12px;
 }
@@ -528,13 +531,24 @@ body {
   justify-content: center;
   width: 100%;
   gap: 10px;
-  transition: height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .rollup-button{
   display:  flex;
+  opacity: 0;
   width: calc(100% - 8px);
+  height: 0;
   justify-content: flex-end;
+  align-items: center;
+  transition: opacity 0.3s linear;
+}
+
+.rollup-button.visible{
+  opacity: 1;
+  height: auto;
+  justify-content: flex-end;
+  align-items: center;
+  transition: opacity 0.3s linear;
 }
 
 .rollup-button button{
@@ -556,7 +570,8 @@ body {
   position: relative;
   margin: 0 -4px;
 }
-/*empty-symbol*/
+
+/* Анимации для карточек */
 .stack-item {
   position: absolute;
   width: calc(100% - 8px);
@@ -565,40 +580,62 @@ body {
   border: 1px solid var(--border-secondary);
   box-shadow: 0 6px 20px var(--shadow);
   padding: 16px;
-  transition: z-index 0.3s ease;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.expanded-content {
-  animation: expandContent 0.3s ease-out;
+  transition: all 0.4s linear;
   overflow: hidden;
 }
 
-@keyframes expandContent {
-  from {
-    opacity: 0;
-    max-height: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    max-height: 200px;
-    transform: translateY(0);
-  }
+.stack-item.expanded {
+  transition: all 0.4s linear;
+}
+
+/* Анимации для расширенного контента */
+.expand-content-enter {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.expand-content-enter-active {
+  max-height: 200px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 400ms linear;
+}
+
+.expand-content-exit {
+  max-height: 200px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.expand-content-exit-active {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 400ms linear;
+}
+
+.expanded-content {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-secondary);
 }
 
 .stack-item.relative-transition {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                  transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.4s linear, 
+              transform 0.4s linear;
 }
-
 
 .stack-item.swiping {
   transition: none;
 }
 
 .stack-item.removing {
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.4s linear;
 }
 
 /* Оверлей свайпа */
@@ -625,7 +662,7 @@ body {
   align-items: center;
   gap: 6px;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s linear;
   pointer-events: none;
 }
 
@@ -675,8 +712,6 @@ body {
   font-size: 0.85em;
 }
 
-
-/*cards-stack*/
 .contact-symbol {
   font-size: 14px;
 }
@@ -721,26 +756,37 @@ body {
 
 .empty-symbol {
   font-size: 4rem;
-  margin-bottom: 12px;
-  animation-duration: 1s;
-  animation-name: rattle;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
+  margin-bottom: 16px;
+  animation: rattle 2s ease-in-out infinite;
+}
+
+@keyframes rattle {
+  0%, 20% {
+    transform: rotate(0deg) translateY(0);
+    animation-timing-function: ease-out;
+  }
+  2%, 6%, 10%, 14%, 18% {
+    transform: rotate(2deg) translateY(-2px);
+    animation-timing-function: ease-in;
+  }
+  4%, 8%, 12%, 16% {
+    transform: rotate(-2deg) translateY(-1px);
+    animation-timing-function: ease-in;
+  }
+  22%, 100% {
+    transform: rotate(0deg) translateY(0);
+    animation-timing-function: ease-out;
+  }
 }
 
 
-@keyframes rattle{
-  from {
-    transform: rotate(20deg); 
-    transform-origin: bottom;
-  }
 
-  to {
-    transform: rotate(-20deg); 
-    transform-origin: bottom;
-    animation-delay: 3s;
-  }
-}
+
+
+
+
+
+
 
 /* === КОМПОНЕНТ МЕРОПРИЯТИЙ === */
 

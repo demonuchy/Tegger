@@ -1,164 +1,161 @@
-import React, { useState, memo, useEffect, useRef, useContext, useCallback } from 'react';
+import React, { useState, memo, useEffect, useRef, useCallback } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import useApi from '../hooks/useAPI';
-;
 
 const Applications = () => {
     const { getActiveApplications, updateApplicationStatus } = useApi();
     const [applications, setApplications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isRollup, setIsRollup] = useState(false)
+    const [isRollup, setIsRollup] = useState(false);
+    const [expandCardId, setExpandCardId] = useState(null);
 
-    const [expandCardId, setExpandCardId] = useState(null)
-
-    
-  
     useEffect(() => {
-      fetchApplications();
+        fetchApplications();
     }, []);
 
     const handleCardExpand = useCallback((cardId) => {
-      setExpandCardId(prev => {
-        if (prev === cardId) return null;
-        return cardId;
-      });
+        setExpandCardId(prev => {
+            if (prev === cardId) return null;
+            return cardId;
+        });
     }, [setExpandCardId]);
 
-    const rollupOnClicKHandler = useCallback(()=>{
-      if(isRollup){
-        setIsRollup(false)
-        setExpandCardId(null)
-        return
-      }
-      setIsRollup(true)
-    }, [isRollup, setIsRollup, setExpandCardId])
-  
+    const rollupOnClicKHandler = useCallback(() => {
+        if (isRollup) {
+            setIsRollup(false);
+            setExpandCardId(null);
+            return;
+        }
+        setIsRollup(true);
+    }, [isRollup, setIsRollup, setExpandCardId]);
+
     const fetchApplications = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await getActiveApplications("active");
-        
-        if (response.applications) {
-          setApplications(response.applications);
-        } else if (response.status === 404 || !response.applications || response.applications.length === 0) {
-          setApplications([]);
-        } else {
-          throw new Error('Некорректный формат ответа');
+        try {
+            setIsLoading(true);
+            setError(null);
+            const response = await getActiveApplications("active");
+            
+            if (response.applications) {
+                setApplications(response.applications);
+            } else if (response.status === 404 || !response.applications || response.applications.length === 0) {
+                setApplications([]);
+            } else {
+                throw new Error('Некорректный формат ответа');
+            }
+        } catch (err) {
+            console.error('Error fetching applications:', err);
+            if (err.response?.status === 404 || err.message?.includes('404')) {
+                setApplications([]);
+                setError(null);
+            } else {
+                setError('Не удалось загрузить заявки');
+            }
+        } finally {
+            setIsLoading(false);
         }
-      } catch (err) {
-        console.error('Error fetching applications:', err);
-        if (err.response?.status === 404 || err.message?.includes('404')) {
-          setApplications([]);
-          setError(null);
-        } else {
-          setError('Не удалось загрузить заявки');
-        }
-      } finally {
-        setIsLoading(false);
-      }
     };
-  
+
     const handleUpdateStatus = async (applicationId, status) => {
-      try {
-        setApplications(prev => prev.filter(app => app.id !== applicationId));
-        
-        updateApplicationStatus(applicationId, status).catch(error => {
-          console.error('Error updating application status:', error);
-          alert('Не удалось обновить статус заявки на сервере');
-        });
-      } catch (error) {
-        console.error('Error in handleUpdateStatus:', error);
-      }
+        try {
+            setApplications(prev => prev.filter(app => app.id !== applicationId));
+            
+            updateApplicationStatus(applicationId, status).catch(error => {
+                console.error('Error updating application status:', error);
+                alert('Не удалось обновить статус заявки на сервере');
+            });
+        } catch (error) {
+            console.error('Error in handleUpdateStatus:', error);
+        }
     };
-  
+
     const getStatusText = (status) => {
-      switch(status) {
-        case 'accept': return 'Принята';
-        case 'reject': return 'Отклонена';
-        case 'pending': return 'На рассмотрении';
-        default: return status;
-      }
+        switch(status) {
+            case 'accept': return 'Принята';
+            case 'reject': return 'Отклонена';
+            case 'pending': return 'На рассмотрении';
+            default: return status;
+        }
     };
-  
+
     const formatDate = (dateString) => {
-      return new Date(dateString).toLocaleDateString('ru-RU', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+        return new Date(dateString).toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     };
-  
+
     if (isLoading) {
-      return (
-        <div className="page-loader">
-          <div className="loader-content">
-            <div className="loader-spinner"></div>
-            <p className="loader-text">Загрузка...</p>
-          </div>
-        </div>
-      );
-    }
-  
-    if (error) {
-      return (
-        <div className="applications-wrapper">
-          <div className="error-wrapper">
-            <div className="error-symbol">⚠️</div>
-            <h3 className="error-heading">Ошибка загрузки</h3>
-            <p className="error-description">{error}</p>
-            <button onClick={fetchApplications} className="action-button">
-              Попробовать снова
-            </button>
-          </div>
-        </div>
-      );
-    }
-  
-    return (
-      <div className="applications-wrapper">
-        <div className="applications-top">
-          <div className="applications-count">
-            На рассмотрении: {applications.length} заявок
-          </div>
-          <p className="applications-tip">
-            Свайпните влево для отклонения или вправо для принятия
-          </p>
-        </div>
-        <div className='cards-stack-wrapper' style={{ height : isRollup ?  `${applications.length * 40}vh` : '55vh'}}>
-          <div className='rollup-button'>
-          {applications.length > 1 && (<button onClick={rollupOnClicKHandler}>{isRollup ? 'Свернуть ': "Pазвернуть"}</button>)}
-          </div>
-        <div className="cards-stack">
-          {applications.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-symbol">📭</div>
-              <h3>Заявок пока нет</h3>
-              <p>Новые заявки появятся здесь</p>
+        return (
+            <div className="page-loader">
+                <div className="loader-content">
+                    <div className="loader-spinner"></div>
+                    <p className="loader-text">Загрузка...</p>
+                </div>
             </div>
-          ) : (
-            applications.map((application, index) => (
-              <ApplicationCard
-                key={application.id}
-                application={application}
-                index={index}
-                total={applications.length}
-                onSwipe={handleUpdateStatus}
-                formatDate={formatDate}
-                getStatusText={getStatusText}
-                isRollUp={isRollup}
-                isExpand={expandCardId === application.id}
-                onExpand={handleCardExpand}
-              />
-            ))
-          )}
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="applications-wrapper">
+                <div className="error-wrapper">
+                    <div className="error-symbol">⚠️</div>
+                    <h3 className="error-heading">Ошибка загрузки</h3>
+                    <p className="error-description">{error}</p>
+                    <button onClick={fetchApplications} className="action-button">
+                        Попробовать снова
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="applications-wrapper">
+            <div className="applications-top">
+                <div className="applications-count">
+                    На рассмотрении: {applications.length} заявок
+                </div>
+                <p className="applications-tip">
+                    Свайпните влево для отклонения или вправо для принятия
+                </p>
+            </div>
+            <div className='cards-stack-wrapper' style={{ height: isRollup ? `${applications.length * 40}vh` : '55vh' }}>
+                <div className={`rollup-button ${applications.length > 1 ? 'visible' : ''}`}>
+                    <button onClick={rollupOnClicKHandler}>{isRollup ? 'Свернуть ' : "Развернуть"}</button>
+                </div>
+                <div className="cards-stack">
+                    {applications.length === 0 ? (
+                        <div className="empty-state">
+                            <div className="empty-symbol">📭</div>
+                            <h3>Заявок пока нет</h3>
+                            <p>Новые заявки появятся здесь</p>
+                        </div>
+                    ) : (
+                        applications.map((application, index) => (
+                            <ApplicationCard
+                                key={application.id}
+                                application={application}
+                                index={index}
+                                total={applications.length}
+                                onSwipe={handleUpdateStatus}
+                                formatDate={formatDate}
+                                getStatusText={getStatusText}
+                                isRollUp={isRollup}
+                                isExpand={expandCardId === application.id}
+                                onExpand={handleCardExpand}
+                            />
+                        ))
+                    )}
+                </div>
+            </div>
         </div>
-        </div>
-      </div>
     );
-  };
+};
 
 const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText, isRollUp, isExpand, onExpand }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -168,13 +165,14 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     const dragRef = useRef(null);
     const startPos = useRef({ x: 0, y: 0 });
     const isHorizontalSwipeRef = useRef(false);
+    const contentRef = useRef(null);
 
-    const onClickHandler = () =>{
-      if(!isRollUp && index !== 0){
-        return
-      }
-      onExpand(application.id)
-    }
+    const onClickHandler = () => {
+        if (!isRollUp && index !== 0) {
+            return;
+        }
+        onExpand(application.id);
+    };
 
     const handleTouchStart = (e) => {
         if (isRemoving || index !== 0) return;
@@ -191,11 +189,11 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     };
 
     const handleTouchMove = (e) => {
-        if(isRollUp && index!==0){
-          return;
+        if (isRollUp && index !== 0) {
+            return;
         }
-        if (!isDragging || isRemoving ) {
-          return;
+        if (!isDragging || isRemoving) {
+            return;
         }
         const touch = e.touches[0];
         const currentX = touch.clientX;
@@ -263,14 +261,14 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
         const scale = index === 0 ? 1 : baseScale;
         const translateY = index === 0 ? 0 : baseTranslateY;
         const swipeTransform = index === 0 ? `translateX(${position.x}px) rotate(${position.x * 0.1}deg)` : '';
-        if(isRollUp){
-          return {
-            transform: `${swipeTransform} translateY(${translateY}px) scale(1)`,
-            transition: isDragging && index === 0 ? 'none' : 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            opacity: 1,
-            zIndex: total - index,
-            cursor: index === 0 ? (isDragging ? 'grabbing' : 'grab') : 'default',
-          };
+        if (isRollUp) {
+            return {
+                transform: `${swipeTransform} translateY(${translateY}px) scale(1)`,
+                transition: isDragging && index === 0 ? 'none' : 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                opacity: 1,
+                zIndex: total - index,
+                cursor: index === 0 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+            };
         }
         return {
             transform: `${swipeTransform} translateY(${translateY}px) scale(${scale})`,
@@ -296,11 +294,11 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     return (
         <div 
             ref={dragRef}
-            className={`stack-item ${swipeDirection ? 'swiping' : ''} ${isRemoving ? 'removing' : ''} ${isRollUp ? 'relative-transition' : ''}`}
+            className={`stack-item ${swipeDirection ? 'swiping' : ''} ${isRemoving ? 'removing' : ''} ${isRollUp ? 'relative-transition' : ''} ${isExpand ? 'expanded' : ''}`}
             style={{
                 ...getCardStyle(12),
                 touchAction: index === 0 ? 'pan-y' : 'auto',
-                position: isRollUp ? 'relative' : 'absolute'
+                position: isRollUp ? 'relative' : 'absolute',
             }}
             onClick={onClickHandler}
             onTouchStart={index === 0 ? handleTouchStart : undefined}
@@ -345,18 +343,25 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                                     @{application.telegram_user_name}
                                 </span>
                             )}
-                            {isExpand && (
-                                <div className="expanded-content">
-                                  <span className="contact-line">
-                                    <span className="contact-symbol">📧</span>
-                                    Дополнительный email: test@example.com
-                                  </span>
-                                  <span className="contact-line">
-                                    <span className="contact-symbol">🏢</span>
-                                    Отдел: Технический отдел
-                                  </span>
+                            
+                            <CSSTransition
+                                in={isExpand}
+                                timeout={400}
+                                classNames="expand-content"
+                                unmountOnExit
+                                nodeRef={contentRef}
+                            >
+                                <div ref={contentRef} className="expanded-content">
+                                    <span className="contact-line">
+                                        <span className="contact-symbol">📧</span>
+                                        Дополнительный email: test@example.com
+                                    </span>
+                                    <span className="contact-line">
+                                        <span className="contact-symbol">🏢</span>
+                                        Отдел: Технический отдел
+                                    </span>
                                 </div>
-                              )}
+                            </CSSTransition>
                         </div>
                     </div>
                 </div>
