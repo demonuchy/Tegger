@@ -19,13 +19,10 @@ const Applications = () => {
 
     const handleCardExpand = useCallback((cardId) => {
       setExpandCardId(prev => {
-        // Если нажимаем на уже развернутую карточку - закрываем
         if (prev === cardId) return null;
-        // Иначе открываем новую карточку
         return cardId;
       });
     }, [setExpandCardId]);
-
 
     const rollupOnClicKHandler = useCallback(()=>{
       if(isRollup){
@@ -35,7 +32,6 @@ const Applications = () => {
       setIsRollup(true)
     }, [isRollup, setIsRollup])
   
-
     const fetchApplications = async () => {
       try {
         setIsLoading(true);
@@ -168,21 +164,16 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     const [isDragging, setIsDragging] = useState(false);
     const [swipeDirection, setSwipeDirection] = useState(null);
     const [isRemoving, setIsRemoving] = useState(false);
-    
- 
     const dragRef = useRef(null);
     const startPos = useRef({ x: 0, y: 0 });
     const isHorizontalSwipeRef = useRef(false);
-
 
     const onClickHandler = () =>{
       onExpand(application.id)
     }
 
-
     const handleTouchStart = (e) => {
         if (isRemoving || index !== 0) return;
-        
         const touch = e.touches[0];
         setIsDragging(true);
         isHorizontalSwipeRef.current = false;
@@ -202,16 +193,13 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
         if (!isDragging || isRemoving ) {
           return;
         }
-        
         const touch = e.touches[0];
         const currentX = touch.clientX;
         const currentY = touch.clientY;
         const startX = startPos.current.x;
         const startY = startPos.current.y;
-        
         const diffX = currentX - startX;
         const diffY = currentY - startY;
-
         if (!isHorizontalSwipeRef.current) {
             if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 5) {
                 isHorizontalSwipeRef.current = true;
@@ -222,7 +210,6 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                 return;
             }
         }
-
         if (isHorizontalSwipeRef.current) {
             const maxOffset = 200;
             const boundedDiff = Math.max(Math.min(diffX, maxOffset), -maxOffset);
@@ -267,25 +254,20 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                 zIndex: 1000,
             };
         }
-        
         const baseScale = 1 - (index * 0.03);
         const baseTranslateY = index * offsetY;
         const scale = index === 0 ? 1 : baseScale;
         const translateY = index === 0 ? 0 : baseTranslateY;
-
         const swipeTransform = index === 0 ? `translateX(${position.x}px) rotate(${position.x * 0.1}deg)` : '';
         if(isRollUp){
-          //setIsWrap(false)
           return {
-            position : 'relative',
             transform: `${swipeTransform} translateY(${translateY}px) scale(1)`,
             transition: isDragging && index === 0 ? 'none' : 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             opacity: 1,
             zIndex: total - index,
             cursor: index === 0 ? (isDragging ? 'grabbing' : 'grab') : 'default',
-        };
+          };
         }
-
         return {
             transform: `${swipeTransform} translateY(${translateY}px) scale(${scale})`,
             transition: isDragging && index === 0 ? 'none' : 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -297,9 +279,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
 
     const getOverlayGradient = () => {
         if (!swipeDirection || index !== 0) return '';
-        
         const intensity = Math.min(Math.abs(position.x) / 100, 0.6);
-        
         if (swipeDirection === 'right') {
             return `linear-gradient(135deg, rgba(34, 197, 94, ${intensity}) 0%, rgba(34, 197, 94, ${intensity * 0.5}) 100%)`;
         } else {
@@ -312,10 +292,11 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     return (
         <div 
             ref={dragRef}
-            className={`stack-item ${swipeDirection ? 'swiping' : ''} ${isRemoving ? 'removing' : ''}`}
+            className={`stack-item ${swipeDirection ? 'swiping' : ''} ${isRemoving ? 'removing' : ''} ${isRollUp ? 'relative-transition' : ''}`}
             style={{
                 ...getCardStyle(12),
                 touchAction: index === 0 ? 'pan-y' : 'auto',
+                position: isRollUp ? 'relative' : 'absolute'
             }}
             onClick={onClickHandler}
             onTouchStart={index === 0 ? handleTouchStart : undefined}
@@ -360,15 +341,21 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                                     @{application.telegram_user_name}
                                 </span>
                             )}
-                            {isExpand && (<span className="contact-line">
-                                    <span className="contact-symbol">6</span>
-                                    Писи попы какашечки 
-                                </span>
-                                )}
+                            {isExpand && (
+                                <div className="expanded-content">
+                                  <span className="contact-line">
+                                    <span className="contact-symbol">📧</span>
+                                    Дополнительный email: test@example.com
+                                  </span>
+                                  <span className="contact-line">
+                                    <span className="contact-symbol">🏢</span>
+                                    Отдел: Технический отдел
+                                  </span>
+                                </div>
+                              )}
                         </div>
                     </div>
                 </div>
-
                 <div className="card-details">
                     <div className="detail-line">
                         <span className="detail-name">Дата заявки:</span>

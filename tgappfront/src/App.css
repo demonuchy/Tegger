@@ -526,9 +526,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
   width: 100%;
   gap: 10px;
+  transition: height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .rollup-button{
@@ -565,8 +565,33 @@ body {
   border: 1px solid var(--border-secondary);
   box-shadow: 0 6px 20px var(--shadow);
   padding: 16px;
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: z-index 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+
+.expanded-content {
+  animation: expandContent 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes expandContent {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+    transform: translateY(0);
+  }
+}
+
+.stack-item.relative-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                  transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 
 .stack-item.swiping {
   transition: none;
