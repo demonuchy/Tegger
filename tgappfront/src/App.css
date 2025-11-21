@@ -117,15 +117,15 @@ body {
   border-radius: 50%;
   background: var(--primary);
   
-  box-shadow: 0 0 12px rgba(255, 165, 0, 0.7);
+  box-shadow: 1px 90px 18px rgba(88, 58, 0, 0.7);
 }
 
 .loader-poin::before {
-  animation: spinHorizontal1 2s ease-in-out infinite;
+  animation: spinHorizontal1 2.5s linear infinite;
 }
 
 .loader-poin::after {
-  animation: spinHorizontal2 2s ease-in-out infinite;
+  animation: spinHorizontal2 2.5s linear infinite;
 }
 
 @keyframes spinHorizontal1 {
@@ -135,11 +135,23 @@ body {
       scale(1);
     opacity: 1;
   }
+  12.5%{
+    transform: 
+      translateX(15px) 
+      scale(0.75);
+    opacity: 0.75;
+  }
   25%{
     transform: 
       translateX(30px) 
       scale(0.5);
-    opacity: 0.7;
+    opacity: 0.5;
+  }
+  37.5%{
+    transform: 
+      translateX(45px) 
+      scale(0.75);
+    opacity: 0.75;
   }
   50% {
     transform: 
@@ -147,11 +159,23 @@ body {
       scale(1);
     opacity: 1;
   }
+  62.5%{
+    transform: 
+      translateX(45px) 
+      scale(1.25);
+    opacity: 1;
+  }
   75%{
     transform: 
       translateX(30px) 
-      scale(1.2);
+      scale(1.5);
     opacity: 1;
+  }
+  87.5%{
+    transform: 
+      translateX(15px) 
+      scale(1.25);
+    opacity: 0.75;
   }
 }
 
@@ -163,11 +187,23 @@ body {
       scale(1);
     opacity: 1;
   }
+  12.5%{
+    transform: 
+    translateX(-15px) 
+    scale(1.25);
+  opacity: 1;
+  }
   25%{
     transform: 
       translateX(-30px) 
-      scale(1.2);
+      scale(1.5);
     opacity: 1;
+  }
+  37.5%{
+    transform: 
+    translateX(-45px) 
+    scale(1.25);
+  opacity: 0.75;
   }
   50% {
     transform: 
@@ -175,11 +211,23 @@ body {
       scale(1);
     opacity: 0.5;
   }
+  62.5%{
+    transform: 
+    translateX(-45px) 
+    scale(0.75);
+  opacity: 0.75;
+  }
   75%{
     transform: 
       translateX(-30px) 
-      scale(0.7);
+      scale(0.5);
     opacity: 0.5;
+  }
+  87.5%{
+    transform: 
+      translateX(-15px) 
+      scale(0.75);
+    opacity: 0.75;
   }
 }
 
@@ -514,9 +562,12 @@ body {
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   transform: translateY(-100%);
   opacity: 0;
+  border-radius: 25px;
 }
 
 .section-header.header-visible {
+  box-shadow: 0px 6px 20px 1px var(--bg-primary);
+  backdrop-filter: blur(17px);
   transform: translateY(10px);
   opacity: 1;
 }
@@ -536,7 +587,7 @@ body {
 
 /* Контент - УМЕНЬШЕННЫЕ ОТСТУПЫ */
 .section-content {
-  padding: 60px 12px 12px;
+  padding: 10px 12px 12px 0px;
   min-height: calc(100vh - 100px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -555,13 +606,12 @@ body {
   left: 0;
   right: 0;
   display: flex;
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border);
   padding: 8px 0;
   max-width: 500px;
   margin: 0 auto;
   z-index: 100;
-  backdrop-filter: blur(10px);
+  height: 100px;
+  background: none;
 }
 
 .nav-item {
@@ -570,41 +620,25 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 8px;
-  border: none;
   background: none;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: all 0.3s ease;
-  border-radius: 6px;
-  margin: 0 4px;
-  position: relative;
   overflow: hidden;
-}
-
-.nav-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.5s ease;
-}
-
-.nav-item:hover::before {
-  left: 100%;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: translateY(100%);
+  opacity: 0;
 }
 
 .nav-item.active {
-  color: var(--primary);
-  background: rgba(255, 165, 0, 0.1);
-  transform: translateY(-1px);
+  transform: translateY(10px);
+  opacity: 1;
 }
 
 .nav-icon {
+  background-color: var(--primary);
+  padding: 8px 17px 8px 17px ;
+  border-radius: 10px;
   font-size: 20px;
   margin-bottom: 4px;
+  opacity: 0.8;
   transition: transform 0.3s ease;
 }
 
@@ -619,6 +653,14 @@ body {
 }
 
 /* === КОМПОНЕНТ ЗАЯВОК === */
+
+
+
+
+
+
+
+
 
 
 
@@ -675,10 +717,11 @@ body {
 .rollup-button button{
   font-size: 10px;
   padding: 5px;
-  color: var(--text-muted);
+  color: var(--primary);
+  opacity: 0.7;
   background: none;
   border-radius: 10px;
-  border: 1px var(--border-secondary) solid;
+  border: 1px var(--primary) solid;
 }
 
 .cards-stack {
@@ -707,6 +750,7 @@ body {
   background: var(--bg-card-gradient);
   border-radius: 14px;
   border: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--primary);
   box-shadow: 0 6px 20px var(--shadow);
   padding: 16px;
   overflow: hidden;
@@ -922,6 +966,11 @@ body {
 
 
 
+
+
+
+
+
 /* === КОМПОНЕНТ МЕРОПРИЯТИЙ === */
 
 .events-wrapper {
@@ -973,15 +1022,29 @@ body {
 
 /* === ЛИЧНЫЙ КАБИНЕТ === */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .profile-wrapper {
   padding: 12px;
 }
 
 .profile-card {
-  background: var(--bg-card-gradient);
-  border-radius: 14px;
-  border: 1px solid var(--border-secondary);
-  padding: 20px;
+  background: none;
   box-shadow: 0 6px 20px var(--shadow);
 }
 
@@ -1078,7 +1141,7 @@ body {
   }
   
   .section-content {
-    padding: 52px 8px 8px;
+    padding: 10px 8px 8px;
   }
   
   .nav-icon {
@@ -1112,7 +1175,7 @@ body {
   }
   
   .section-content {
-    padding: 48px 6px 6px;
+    padding: 10px 6px 6px;
   }
   
   .form-control {

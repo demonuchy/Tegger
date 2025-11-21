@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, useRef, useCallback } from 'react';
+import React, { useState, memo, useEffect, useRef, useCallback, forwardRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import LoadingSpinner from './LoaderSpiner';
 import Error from './ErrorScreen';
@@ -99,7 +99,7 @@ const Applications = () => {
 
     return (
         <div className="applications-wrapper">
-            {isLoading ? (
+            {true ? (
                 <LoadingSpinner fullScreen={false}/>
             ) : (
                 <>
@@ -130,6 +130,7 @@ const Applications = () => {
                                 </div>
                             ) : (
                                 applications.map((application, index) => (
+                                   
                                     <ApplicationCard
                                         key={application.id}
                                         application={application}
@@ -142,6 +143,7 @@ const Applications = () => {
                                         isExpand={expandCardId === application.id}
                                         onExpand={handleCardExpand}
                                     />
+                        
                                 ))
                             )}
                         </div>
