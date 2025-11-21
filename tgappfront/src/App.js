@@ -1,15 +1,17 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Error from './components/ErrorScreen';
 import { UserProvider, useUser } from './contexts/UserContext';
 import Application from './components/Application';
 import LoadingSpinner from './components/LoaderSpiner';
 import Home from './components/Home';
 import './App.css';
 
+
 // Компонент для проверки готовности приложения
 const AppInitializer = ({ children }) => {
-  const { isLoading, userData } = useUser();
+  const { isLoading, userData, error } = useUser();
 
   if (isLoading) {
     return (
@@ -21,8 +23,15 @@ const AppInitializer = ({ children }) => {
     );
   }
 
+  if(error){
+    return(
+    <Error />
+    )
+  }
   return children;
 };
+
+  
 
 // Компонент для маршрутизации
 const AppRoutes = () => {

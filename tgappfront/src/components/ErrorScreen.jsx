@@ -3,11 +3,11 @@ import './SubmitStatus.css';
 
 const Error = () => {
   return (
-    <div className="applications-wrapper">
         <div className="error-wrapper">
-              wkqewklwfklfwe     
-        </div>
-    </div> 
+              <img src="emoji.png"/>  
+              <p>Упс..</p> 
+              <p>Произошла ошибка</p> 
+        </div> 
   );
 };
 

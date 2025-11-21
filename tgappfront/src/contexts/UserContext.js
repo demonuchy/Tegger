@@ -1,6 +1,7 @@
 // src/contexts/UserContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useTelegram } from '../hooks/useTelegramAPI';
+import Error from '../components/ErrorScreen';
 import useApi from '../hooks/useAPI';
 
 const UserContext = createContext();
@@ -36,7 +37,6 @@ export const UserProvider = ({ children }) => {
         console.log("Пользователь не найден")
       }
     } catch (err) {
-      console.error('Error fetching user data:', err);
       setError('Ошибка загрузки данных пользователя');
     } finally {
       setIsLoading(false);
