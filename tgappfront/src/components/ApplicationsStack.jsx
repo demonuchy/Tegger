@@ -99,7 +99,7 @@ const Applications = () => {
 
     return (
         <div className="applications-wrapper">
-            {true ? (
+            {isLoading ? (
                 <LoadingSpinner fullScreen={false}/>
             ) : (
                 <>

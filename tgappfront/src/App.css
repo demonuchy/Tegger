@@ -633,12 +633,12 @@ body {
 }
 
 .nav-icon {
-  background-color: var(--primary);
   padding: 8px 17px 8px 17px ;
   border-radius: 10px;
+  border-bottom: 1px solid var(--primary-dark);
   font-size: 20px;
   margin-bottom: 4px;
-  opacity: 0.8;
+  
   transition: transform 0.3s ease;
 }
 
