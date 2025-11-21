@@ -44,19 +44,19 @@ class ApplicationsLatest(Base):
     __table_args__ = {'extend_existing': True}
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
     # Паспортные данные mapped_column()
-    full_name: Mapped[str] = mapped_column(String, nullable=False)
-    phone_number: Mapped[str] = mapped_column(String, nullable=False)
+    full_name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     passport_series : Mapped[str] = mapped_column(String, nullable=False, unique=True)
     passport_number : Mapped[str] = mapped_column(String, nullable=False, unique=True)
     actual_address : Mapped[str] = mapped_column(String, nullable=False)
     address_registered : Mapped[str] = mapped_column(String, nullable=False)
-
-
-
-    
+    # доп данные
+    educational_group : Mapped[str] = mapped_column(String, nullable=False)
+    educational_faculty : Mapped[str] = mapped_column(String, nullable=False)
+    creative_skills :Mapped[str] = mapped_column(String, nullable=False)
+    phone_number: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     # Telegram данные
-    telegram_id: Mapped[str] = mapped_column(String, nullable=False)  
-    telegram_user_name: Mapped[str] = mapped_column(String, nullable=False)  
+    telegram_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)  
+    telegram_user_name: Mapped[str] = mapped_column(String, unique=True, nullable=False)    
     # metadata
     status : Mapped[str] = mapped_column(String, nullable=False, default='active')
     #is_accepted : Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)

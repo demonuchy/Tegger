@@ -3,27 +3,31 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { UserProvider, useUser } from './contexts/UserContext';
 import Application from './components/Application';
+import LoadingSpinner from './components/LoaderSpiner';
 import Home from './components/Home';
 import './App.css';
 
-// Компонент для маршрутизации с проверкой пользователя
-const AppRoutes = () => {
-  const { userData, isLoading } = useUser();
+// Компонент для проверки готовности приложения
+const AppInitializer = ({ children }) => {
+  const { isLoading, userData } = useUser();
 
   if (isLoading) {
     return (
-      <div className="app-wrapper">
-        <div className="page-loader">
-          <div className="loader-content">
-            <div className="loader-spinner"></div>
-            <p className="loader-text">Загрузка...</p>
-          </div>
-        </div>
-      </div>
+      <LoadingSpinner 
+        fullScreen={true}
+        text="Загрузка профиля..." 
+        size="large"
+      />
     );
   }
 
-  // Если пользователь существует и имеет данные - показываем Home, иначе Application
+  return children;
+};
+
+// Компонент для маршрутизации
+const AppRoutes = () => {
+  const { userData } = useUser();
+
   return (
     <Routes>
       <Route 
@@ -53,7 +57,9 @@ function App() {
     <UserProvider>
       <Router>
         <div className="app-wrapper">
-          <AppRoutes />
+          <AppInitializer>
+            <AppRoutes />
+          </AppInitializer>
         </div>
       </Router>
     </UserProvider>

@@ -18,7 +18,8 @@ async def create_all_tables():
     Base.metadata.clear()
     print('после очищения', len(Base.metadata.tables))
     try:
-        from database.models.applications import Applications, Users
+        from database.models.applications import Applications, Users, ApplicationsLatest
+        from database.models.user import UsersLatest
         from database.models.admin import Admins
         print('после импорта', len(Base.metadata.tables))
         async with engine.begin() as conn:

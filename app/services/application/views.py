@@ -1,12 +1,12 @@
 import os
 import sys
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from application.schem import AplicationRequest
+from application.schem import AplicationRequest, ExtendedApplicationRequest
 from services.bot.bot_aiogram import send_application_notifications, send_message
 from app.services.database.models.applications import Applications, Users
 from app.services.application.serializer import ApplicationModelSerializetr
@@ -92,9 +92,13 @@ public_application_router_v2 = APIRouter(prefix="/application/v2")
 
 
 @public_application_router_v2.post('')
-@handle_errors('/')
-async def submit_an_application(service : ApplicationService = Depends(get_application_service), background : BackgroundTasks = BackgroundTasks):
-    pass
+async def submit_an_application(data : ExtendedApplicationRequest, background : BackgroundTasks, service : ApplicationService = Depends(get_application_service)):
+    try:
+        await service.submit_an_application(data)
+        return JSONResponse({"details" : "ok"}, status_code=200, background=background)
+    except HTTPException as e:
+        return JSONResponse({"details" : e.detail}, status_code=e.status_code) 
+
 
 
 
@@ -103,20 +107,30 @@ admin_application_router_v2 = APIRouter(prefix="/application/v2")
 
 
 @admin_application_router_v2.patch('/{application_id}/accept')
-@handle_errors('/{application_id}/accept')
-async def accept_application(service : ApplicationService = Depends(get_application_service), background : BackgroundTasks = BackgroundTasks):
-    pass
+async def accept_application(application_id : int, background : BackgroundTasks, service : ApplicationService = Depends(get_application_service)):
+    try:
+        await service.accept_application(application_id)
+        return JSONResponse({"details" : "ok"}, status_code=200)
+    except HTTPException as e:
+        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
 
 
 @admin_application_router_v2.patch('/{application_id}/reject')
-@handle_errors('/{application_id}/reject')
-async def reject_application(service : ApplicationService = Depends(get_application_service), background : BackgroundTasks = BackgroundTasks):
-    pass
+async def reject_application(application_id : int, background : BackgroundTasks, service : ApplicationService = Depends(get_application_service)):
+    try:
+        await service.reject_application(application_id)
+        return JSONResponse({"details" : "ok"}, status_code=200)
+    except HTTPException as e:
+        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
 
 
 @admin_application_router_v2.get('')
-@handle_errors('/')
-async def get_applications_by_status(service : ApplicationService = Depends(get_application_service)):
-    pass
+async def get_applications_by_status(status : str, service : ApplicationService = Depends(get_application_service)):
+    try:
+        applications = await service.get_applications_by_status(status)
+        return JSONResponse({"details" : "ok", "applications" : applications}, status_code=200)
+    except HTTPException as e:
+        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
+
 
     

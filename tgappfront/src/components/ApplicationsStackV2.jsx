@@ -1,7 +1,5 @@
 import React, { useState, memo, useEffect, useRef, useCallback } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import LoadingSpinner from './LoaderSpiner';
-import Error from './ErrorScreen';
 import useApi from '../hooks/useAPI';
 
 const Applications = () => {
@@ -89,69 +87,75 @@ const Applications = () => {
             minute: '2-digit'
         });
     };
+
+    if (isLoading) {
+        return (
+            <div className="page-loader">
+                <div className="loader-content">
+                    <div className="loader-spinner"></div>
+                    <p className="loader-text">Загрузка...</p>
+                </div>
+            </div>
+        );
+    }
+
     if (error) {
         return (
             <div className="applications-wrapper">
-                <Error />
+                <div className="error-wrapper">
+                    <div className="error-symbol">⚠️</div>
+                    <h3 className="error-heading">Ошибка загрузки</h3>
+                    <p className="error-description">{error}</p>
+                    <button onClick={fetchApplications} className="action-button">
+                        Попробовать снова
+                    </button>
+                </div>
             </div>
         );
     }
 
     return (
         <div className="applications-wrapper">
-            {isLoading ? (
-                <LoadingSpinner fullScreen={false}/>
-            ) : (
-                <>
-                    <div className="applications-top">
-                        <div className="applications-count">
-                            На рассмотрении: {applications.length} заявок
+            <div className="applications-top">
+                <div className="applications-count">
+                    На рассмотрении: {applications.length} заявок
+                </div>
+                <p className="applications-tip">
+                    Свайпните влево для отклонения или вправо для принятия
+                </p>
+            </div>
+            <div className='cards-stack-wrapper' style={{ height: isRollup ? `${applications.length * 40}vh` : '55vh' }}>
+                <div className={`rollup-button ${applications.length > 1 ? 'visible' : ''}`}>
+                    <button onClick={rollupOnClicKHandler}>{isRollup ? 'Свернуть ' : "Развернуть"}</button>
+                </div>
+                <div className="cards-stack">
+                    {applications.length === 0 ? (
+                        <div className="empty-state">
+                            <div className="empty-symbol">📭</div>
+                            <h3>Заявок пока нет</h3>
+                            <p>Новые заявки появятся здесь</p>
                         </div>
-                        <p className="applications-tip">
-                            Свайпните влево для отклонения или вправо для принятия
-                        </p>
-                    </div>
-                    <div className='cards-stack-wrapper' style={{ height: isRollup ? `${applications.length * 40}vh` : '55vh' }}>
-                        <div className={`rollup-button ${applications.length > 1 ? 'visible' : ''}`}>
-                            <button onClick={rollupOnClicKHandler}>
-                                {isRollup ? 'Свернуть' : 'Развернуть'}
-                            </button>
-                        </div>
-                        <div className="cards-stack">
-                            {applications.length === 0 ? (
-                                <div className="empty-state">
-                                    <img 
-                                        className="empty-symbol" 
-                                        src={`${process.env.PUBLIC_URL}/mail-box.png`}
-                                        alt="Почтовый ящик"
-                                    />
-                                    <h3>Заявок пока нет</h3>
-                                    <p>Новые заявки появятся здесь</p>
-                                </div>
-                            ) : (
-                                applications.map((application, index) => (
-                                    <ApplicationCard
-                                        key={application.id}
-                                        application={application}
-                                        index={index}
-                                        total={applications.length}
-                                        onSwipe={handleUpdateStatus}
-                                        formatDate={formatDate}
-                                        getStatusText={getStatusText}
-                                        isRollUp={isRollup}
-                                        isExpand={expandCardId === application.id}
-                                        onExpand={handleCardExpand}
-                                    />
-                                ))
-                            )}
-                        </div>
-                    </div>
-                </>
-            )}
+                    ) : (
+                        applications.map((application, index) => (
+                            <ApplicationCard
+                                key={application.id}
+                                application={application}
+                                index={index}
+                                total={applications.length}
+                                onSwipe={handleUpdateStatus}
+                                formatDate={formatDate}
+                                getStatusText={getStatusText}
+                                isRollUp={isRollup}
+                                isExpand={expandCardId === application.id}
+                                onExpand={handleCardExpand}
+                            />
+                        ))
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
-
 
 const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, getStatusText, isRollUp, isExpand, onExpand }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -288,6 +292,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
     if (index >= 5) return null;
 
     return (
+        <div className='stack-item-wrapper'>
         <div 
             ref={dragRef}
             className={`stack-item ${swipeDirection ? 'swiping' : ''} ${isRemoving ? 'removing' : ''} ${isRollUp ? 'relative-transition' : ''} ${isExpand ? 'expanded' : ''}`}
@@ -380,6 +385,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                     )}
                 </div>
             </div>
+        </div>
         </div>
     );
 });

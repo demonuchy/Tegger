@@ -1,13 +1,15 @@
 // components/Home.js
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 import Applications from './ApplicationsStack';
+//import Applications from './ApplicationsStackV2';
 import PersonalCabinet from './UserProfile';
 import EventsList from './Mero';
 
 const Home = () => {
   const { userData, telegramUser } = useUser();
   const [activeTab, setActiveTab] = useState('events');
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   const tabs = [
     { id: 'events', label: 'Мероприятия', icon: '📅', component: <EventsList /> },
@@ -27,10 +29,30 @@ const Home = () => {
     'applications': 'Заявки волонтеров'
   };
 
+  // Эффект для анимации header'а при смене вкладки
+  useEffect(() => {
+    // Показываем header при смене вкладки
+    setIsHeaderVisible(true);
+    
+    // Через 1 секунду скрываем header
+    const timer = setTimeout(() => {
+      setIsHeaderVisible(false);
+    }, 1500);
+
+    // Очищаем таймер при размонтировании или при следующем вызове useEffect
+    return () => clearTimeout(timer);
+  }, [activeTab]); // Зависимость от activeTab - эффект сработает при каждой смене вкладки
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+  };
+
   return (
     <div className="app-wrapper">
       <div className="main-wrapper">
-        <header className="section-header">
+        <header 
+          className={`section-header ${isHeaderVisible ? 'header-visible' : 'header-hidden'}`}
+        >
           <h1 className="section-title">{tabTitles[activeTab]}</h1>
         </header>
 
@@ -43,10 +65,9 @@ const Home = () => {
             <button
               key={tab.id}
               className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
             >
               <span className="nav-icon">{tab.icon}</span>
-              <span className="nav-text">{tab.label}</span>
             </button>
           ))}
         </footer>

@@ -1,5 +1,4 @@
 // components/Application.js
-// react-dadata библиотека для подсказки адресов 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useTelegram } from '../hooks/useTelegramAPI';
 import useApi from '../hooks/useAPI';
@@ -7,7 +6,7 @@ import { useUser } from '../contexts/UserContext';
 import SubmitStatus from './SubmitStatus';
 
 const Application = () => {
-  const { user: telegramUser, setupMainButton, isLoading: telegramLoading, mainButton } = useTelegram();
+  const { user: telegramUser, setupMainButton, mainButton } = useTelegram();
   const { refetchUser } = useUser();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -139,7 +138,6 @@ const Application = () => {
     const success = await aplicationRequest(currentFormData.fullName.trim(), telegramUser?.id?.toString() || 'unknown', telegramUser?.username || 'unknown', cleanedPhone)
     if (success) {
       setSubmitStatus('success');
-      // После успешной отправки обновляем данные пользователя
       setTimeout(() => {
         refetchUser();
       }, 2000);
@@ -152,21 +150,8 @@ const Application = () => {
   }, [telegramUser, aplicationRequest, validatePhone, validateFullName, cleanForm, showErrorAnimation, refetchUser, mainButton]);
 
   useEffect(() => {
-    if (!telegramLoading) {
-      setupMainButton("Отправить заявку", handlerSubmitMainButton, {color: "#e68a00", textColor: "#ffffff"});
-    }
-  }, [setupMainButton, telegramLoading, handlerSubmitMainButton]);
-
-  if (telegramLoading) {
-    return (
-      <div className="page-loader">
-        <div className="loader-content">
-          <div className="loader-spinner"></div>
-          <p className="loader-text">Загрузка приложения...</p>
-        </div>
-      </div>
-    );
-  }
+    setupMainButton("Отправить заявку", handlerSubmitMainButton, {color: "#e68a00", textColor: "#ffffff"});
+  }, [setupMainButton, handlerSubmitMainButton]);
 
   if (['loading', 'success', 'error'].includes(submitStatus)) {
     const statusConfig = {
@@ -280,7 +265,7 @@ const Application = () => {
         <p>© 2024 Берег Дона. Все права защищены.</p>
       </footer>
     </div>
-  );
+  );    
 };
 
 export default Application;

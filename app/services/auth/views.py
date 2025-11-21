@@ -15,6 +15,9 @@ from app.cors.settings import settings
 from app.services.database.models.applications import Users
 
 
+DEV = False
+
+
 def verify_telegram_init_data(init_data: str, bot_token: str) -> bool:
     """Верификация подписи Telegram Web App initData"""
     try:
@@ -67,7 +70,6 @@ def get_user_id_from_init_data(init_data: str, bot_token: str) -> Optional[int]:
     user_data = data.get('user')
     if user_data and 'id' in user_data:
         return user_data['id']
-    
     return None
 
 
@@ -75,6 +77,8 @@ class CheckTelegramMiddleware:
     async def __call__(self, request : Request):
         """Проверяем отправлен ли запрос с телеграм web app"""
         print("1 Проверяю пришел ли запрос с телеграм Web App")
+        if DEV:
+            return request
         init_data : str | None = request.headers.get("X-Telegram-Init-Data")
         if not init_data:
             raise HTTPException(detail="init data не передан", status_code=401)
@@ -86,6 +90,8 @@ class AuthMiddleware:
     async def __call__(self, request : Request, user_id : str = Depends(CheckTelegramMiddleware())):
         """проверяем пользователя"""
         print("2 Аунтификация пользователя", request)
+        if DEV:
+            return request
         user = await Users.objects.get_by_field("telegram_id", user_id)
         if not user:
             raise HTTPException(detail="Вы не зарегестрированны", status_code=401)
@@ -96,9 +102,11 @@ class AdminPermissionMiddleware:
     async def __call__(self, request : Request, user : Users = Depends(AuthMiddleware())):
         """Проверяем права доступа"""
         print("3 Поверка прав пользователя", request, user)
+        if DEV:
+            return request
         if not user.is_admin:
             raise HTTPException(detail="Недостаточно прав", status_code=403)
-        return request
+        return user
 
 
 puplic_router = APIRouter(prefix="/api", tags=["puplic"], dependencies=[Depends(CheckTelegramMiddleware())])

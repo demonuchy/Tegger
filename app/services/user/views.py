@@ -1,6 +1,6 @@
 import os
 import sys
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
 
@@ -40,13 +40,16 @@ async def pre_check_user(telegram_id : str):
 
 
 
-
 private_user_router_v2 = APIRouter(prefix="/users/v2")
 
 
 @private_user_router_v2.get("/me")
-async def get_me(service : UserService = Depends(get_user_service)):
-    pass
+async def get_me(telegram_id : str, service : UserService = Depends(get_user_service)):
+    try:
+        user = await service.get_me(telegram_id)
+        return JSONResponse({"details" : "ok", "user" : user}, status_code=200)
+    except HTTPException as e:
+        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
 
 
 

@@ -33,30 +33,11 @@ export const UserProvider = ({ children }) => {
       if (response.user) {
         setUserData(response.user);
       } else {
-        // Если пользователь не найден, создаем базовые данные
-        setUserData({
-          id: telegramUser.id,
-          full_name: telegramUser.first_name + (telegramUser.last_name ? ` ${telegramUser.last_name}` : ''),
-          username: telegramUser.username,
-          is_admin: false,
-          created_at: new Date().toISOString()
-        });
+        console.log("Пользователь не найден")
       }
     } catch (err) {
       console.error('Error fetching user data:', err);
-      
-      if (err.response?.status === 404 || err.message?.includes('404') || err.message?.includes('not found')) {
-        // Создаем временного пользователя если не найден в базе
-        setUserData({
-          id: telegramUser.id,
-          full_name: telegramUser.first_name + (telegramUser.last_name ? ` ${telegramUser.last_name}` : ''),
-          username: telegramUser.username,
-          is_admin: false,
-          created_at: new Date().toISOString()
-        });
-      } else {
-        setError('Ошибка загрузки данных пользователя');
-      }
+      setError('Ошибка загрузки данных пользователя');
     } finally {
       setIsLoading(false);
     }

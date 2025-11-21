@@ -17,13 +17,15 @@ class ExtendedApplicationRequest(BaseModel):
     passport_number : str
     actual_address : str
     address_registered : str
-
-
-    
-    # дополнительные данные 
+    # доп данные
+    educational_group : str
+    educational_faculty : str
+    creative_skills :str
+    phone_number : str
+    # meta data
     telegram_id : str
     telegram_user_name : str
-    phone_number : str
+    
 
 
 class ApplicationScheme(BaseModel):
