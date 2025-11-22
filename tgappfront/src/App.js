@@ -16,8 +16,7 @@ const AppInitializer = ({ children }) => {
   if (isLoading) {
     return (
       <LoadingSpinner 
-        fullScreen={true}
-        text="Загрузка профиля..." 
+        fullScreen={true} 
         size="large"
       />
     );

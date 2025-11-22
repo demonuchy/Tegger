@@ -37,7 +37,7 @@ const Home = () => {
     setIsHeaderVisible(true);
     const timer = setTimeout(() => {
       setIsHeaderVisible(false);
-    }, 1500);
+    }, 1100);
     return () => clearTimeout(timer);
   }, [activeTab]); 
 
@@ -51,7 +51,6 @@ const Home = () => {
     startPosition.current = {x : touch.clientX, y :  touch.clientY}
     isHorizontalSwipeRef.current = false
   }
-
   const handleTouchMove = (e) => {
     const touch = e.touches[0];
     const currentX = touch.clientX;
