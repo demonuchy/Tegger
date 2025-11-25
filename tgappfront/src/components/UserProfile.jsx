@@ -1,75 +1,75 @@
 // components/UserProfile.js
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Webcam from 'react-webcam';
 import { useUser } from '../contexts/UserContext';
+import { useDocumentScanner } from '../hooks/useDocumentScanner';
 
 const PersonalCabinet = () => {
   const { userData, telegramUser } = useUser();
-  const [position, setPosition] = useState(null)
-  const startPosition = useRef({ x: 0, y: 0 });
-  const swipeDirectionRef = useRef(null); // 'left' или 'right'
-  const isHorizontalSwipeRef = useRef(false);
-  const lastDiffXRef = useRef(0);
+  const { 
+    isCameraActive, 
+    cameraRef, 
+    startCamera, 
+    stopCamera, 
+    startDocumentDetection,
+    stopDocumentDetection,
+    modelLoaded 
+  } = useDocumentScanner();
+  
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [detectionStatus, setDetectionStatus] = useState('Ожидание документа...');
 
+  // Обработчик обнаружения документа
+  const handleDocumentDetected = useCallback((image) => {
+    console.log('Документ обнаружен!', image);
+    setCapturedImage(image);
+    setDetectionStatus('Документ распознан!');
+  }, []);
 
-  const handleTouchStart = (e)=>{
-    const touch = e.touches[0];
-    startPosition.current = {x : touch.clientX, y :  touch.clientY}
-    isHorizontalSwipeRef.current = false
-    setPosition({x : 0, y : 0})
-  }
-  const handleTouchMove = (e) => {
-    const touch = e.touches[0];
-    const currentX = touch.clientX;
-    const currentY = touch.clientY;
-    const startX = startPosition.current.x;
-    const startY = startPosition.current.y;
-  
-    const diffX = currentX - startX;
-    const diffY = currentY - startY;
-  
-    if (!isHorizontalSwipeRef.current) {
-      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
-        isHorizontalSwipeRef.current = true;
-        swipeDirectionRef.current = diffX > 0 ? 'right' : 'left';
-        e.preventDefault();
-      } else if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 10) {
-        return; 
-      } else {
-        return; 
-      }
+  // Запускаем обнаружение когда камера активна и модель загружена
+  useEffect(() => {
+    if (isCameraActive && modelLoaded && !capturedImage) {
+      console.log('Запуск обнаружения документа');
+      startDocumentDetection();
+      setDetectionStatus('Наведите документ на рамку...');
+    } else if (capturedImage) {
+      stopDocumentDetection();
     }
-  
-    if (isHorizontalSwipeRef.current) {
-      e.preventDefault();
-      const maxOffset = 100
-      const boundedDiff = Math.max(Math.min(diffX, maxOffset), -maxOffset);
-      lastDiffXRef.current = diffX
-      setPosition({x : boundedDiff, y : 0}) 
-    }
+
+    return () => {
+      stopDocumentDetection();
+    };
+  }, [isCameraActive, modelLoaded, capturedImage, startDocumentDetection, stopDocumentDetection]);
+
+  const handleScanClick = () => {
+    setCapturedImage(null);
+    setDetectionStatus('Ожидание документа...');
+    // Передаем callback для обработки обнаруженного документа
+    startCamera(handleDocumentDetected);
   };
 
-  const handleTouchEnd = () => {
-    const swipeThreshold = 80;
-    if (isHorizontalSwipeRef.current && Math.abs(lastDiffXRef.current) > swipeThreshold) {
-      const direction = lastDiffXRef.current > 0 ? 'right' : 'left';
-      console.log('Свайп', direction);
-      const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
-      let newIndex;
-      if (direction === 'right' && currentIndex < tabs.length - 1) {
-        newIndex = currentIndex + 1;
-      } else if (direction === 'left' && currentIndex > 0) {
-        newIndex = currentIndex - 1;
-      }
-      if (newIndex !== undefined) {
-        setActiveTab(tabs[newIndex].id);
-      }
-    }
-    startPosition.current = { x: 0, y: 0 };
-    isHorizontalSwipeRef.current = false;
-    swipeDirectionRef.current = null;
-    lastDiffXRef.current = 0;
+  const handleCloseCamera = () => {
+    stopCamera();
+    stopDocumentDetection();
+    setCapturedImage(null);
+    setDetectionStatus('Ожидание документа...');
   };
 
+  const handleRetake = () => {
+    setCapturedImage(null);
+    setDetectionStatus('Наведите документ на рамку...');
+    // Перезапускаем обнаружение после пересъемки
+    setTimeout(() => {
+      if (isCameraActive && modelLoaded) {
+        startDocumentDetection();
+      }
+    }, 100);
+  };
+
+  const handleConfirm = () => {
+    console.log('Изображение подтверждено:', capturedImage);
+    handleCloseCamera();
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Не указана';
@@ -82,6 +82,62 @@ const PersonalCabinet = () => {
 
   return (
     <div className="profile-wrapper">
+      {/* Камера на весь экран */}
+      {isCameraActive && (
+        <div className="camera-fullscreen">
+          {/* Рамка показывается только когда снимок НЕ сделан */}
+          {!capturedImage && (
+            <div className="camera-frame">
+              <div className="frame-guide"></div>
+              {/* Статус обнаружения */}
+              <div className="detection-status">
+                {detectionStatus}
+              </div>
+            </div>
+          )}
+          
+          {!capturedImage ? (
+            <>
+              <Webcam
+                audio={false}
+                ref={cameraRef}
+                screenshotFormat="image/jpeg"
+                videoConstraints={{
+                  facingMode: 'environment',
+                  width: { ideal: 1280 },
+                  height: { ideal: 720 }
+                }}
+                className="camera-preview-fullscreen"
+              />
+              {/* Индикатор загрузки модели */}
+              {!modelLoaded && (
+                <div className="model-loading">
+                  Загрузка системы распознавания...
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="preview-fullscreen">
+              <img src={capturedImage} alt="Captured document" className="captured-image-fullscreen" />
+            </div>
+          )}
+          {/* Кнопка закрытия */}
+          <button onClick={handleCloseCamera} className="close-camera-btn-fullscreen">✗</button>
+          {/* Управление для превью */}
+          {capturedImage && (
+            <div className="preview-controls-fullscreen">
+              <button onClick={handleRetake} className="control-btn retake">
+                🔄 Переснять
+              </button>
+              <button onClick={handleConfirm} className="control-btn confirm">
+                ✅ Подтвердить
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Основной контент профиля */}
       <div className="profile-card">
         <div className="profile-image">
           <div className="image-placeholder">
@@ -90,7 +146,15 @@ const PersonalCabinet = () => {
         </div>
         
         <div>
-          <h3 className="profile-name">{userData?.full_name || `${telegramUser?.first_name} ${telegramUser?.last_name || ''}`}</h3>
+          <h3 className="profile-name">
+            {userData?.full_name || `${telegramUser?.first_name} ${telegramUser?.last_name || ''}`}
+          </h3>
+          
+          <div className="scan-section">
+            <button onClick={handleScanClick} className="scan-btn">
+              📷 Сканировать документ
+            </button>
+          </div>
           
           <div className='info-block-wrapper'>
             <h4>Telegram</h4>
@@ -105,7 +169,6 @@ const PersonalCabinet = () => {
               </div>
             </div>
           </div>
-
 
           <div className='info-block-wrapper'>
             <h4>Основные</h4>

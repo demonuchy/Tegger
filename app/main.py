@@ -60,17 +60,17 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-#app.add_middleware(AdminAuthMiddleware)
 app.add_middleware(DBSessionMiddleware)
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key="your-very-secret-key-change-in-production",  # Обязательно измените!
+    secret_key=settings.ADMIN_SECRET_TOKEN,  # Обязательно измените!
     session_cookie="sqladmin_session",  # Ваше название куки
     max_age=3600 * 24,  # 24 часа (настройте по необходимости)
-    https_only=False,  # True для production с HTTPS
+    https_only=True,  # True для production с HTTPS
     same_site="lax"
 )
+
 
 app.add_middleware(
     CORSMiddleware,

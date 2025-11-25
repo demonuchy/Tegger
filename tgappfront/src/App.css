@@ -1234,3 +1234,303 @@ body {
 .section-content {
   scroll-behavior: smooth;
 }
+
+
+
+
+
+/* В ваш CSS файл */
+
+
+
+
+
+
+
+
+
+
+/* Стили для полноэкранной камеры */
+.camera-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-preview-fullscreen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  height: 250px;
+  border: 3px solid var(--primary);
+  border-radius: 8px;
+  z-index: 2001;
+  pointer-events: none;
+  background: rgba(255, 165, 0, 0.05);
+}
+
+.frame-guide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255, 165, 0, 0.8);
+  border-radius: 6px;
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8);
+}
+
+/* Угловые маркеры - исправленный синтаксис */
+.frame-guide::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 25px;
+  height: 25px;
+  border: 3px solid var(--primary);
+  border-right: none;
+  border-bottom: none;
+}
+
+.frame-guide::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 25px;
+  height: 25px;
+  border: 3px solid var(--primary);
+  border-left: none;
+  border-top: none;
+}
+
+.corner-top-right {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 25px;
+  height: 25px;
+  border: 3px solid var(--primary);
+  border-left: none;
+  border-bottom: none;
+}
+
+.corner-bottom-left {
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  width: 25px;
+  height: 25px;
+  border: 3px solid var(--primary);
+  border-right: none;
+  border-top: none;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.8;
+    border-color: rgba(255, 165, 0, 0.8);
+  }
+  50% { 
+    opacity: 1;
+    border-color: var(--primary);
+  }
+}
+
+.close-camera-btn-fullscreen {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 165, 0, 0.9);
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.close-camera-btn-fullscreen:hover {
+  background: var(--primary);
+  transform: scale(1.1);
+}
+
+/* Стили для превью */
+.preview-fullscreen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+
+.captured-image-fullscreen {
+  width: 350px;
+  height: 250px;
+  border-radius: 8px;
+  border: 3px solid var(--primary);
+  box-shadow: 0 8px 32px rgba(255, 165, 0, 0.3);
+  object-fit: contain;
+  background: var(--bg-primary);
+}
+
+.preview-controls-fullscreen {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  z-index: 2002;
+}
+
+.control-btn {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn.retake {
+  background: var(--bg-card-gradient);
+  color: var(--text-primary);
+  border: 1px solid var(--primary);
+}
+
+.control-btn.confirm {
+  background: var(--gradient-primary);
+  color: #000;
+}
+
+.control-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4);
+}
+
+/* Кнопка сканирования в профиле */
+.scan-section {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.scan-btn {
+  padding: 14px 28px;
+  background: var(--gradient-primary);
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+}
+
+.scan-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4);
+}
+
+.detection-status {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 8px 16px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.model-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--primary);
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 12px 24px;
+  border-radius: 10px;
+  z-index: 2002;
+}
+
+/* Анимация для рамки при обнаружении */
+.frame-guide.detected {
+  border-color: #00ff00;
+  animation: pulse-green 0.5s infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { 
+    opacity: 1;
+    border-color: #00ff00;
+  }
+  50% { 
+    opacity: 0.7;
+    border-color: #80ff80;
+  }
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 480px) {
+  .camera-frame {
+    width: 300px;
+    height: 214px;
+  }
+  
+  .captured-image-fullscreen {
+    width: 300px;
+    height: 214px;
+  }
+}
+
+@media (max-height: 700px) {
+  .camera-frame {
+    width: 280px;
+    height: 200px;
+  }
+  
+  .captured-image-fullscreen {
+    width: 280px;
+    height: 200px;
+  }
+  
+  .preview-controls-fullscreen {
+    bottom: 20px;
+  }
+}   

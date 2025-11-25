@@ -1,57 +1,76 @@
 import os
 import sys
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
-from typing import Optional, Tuple
-
+import jwt
+from datetime import datetime, timedelta, timezone
+from typing import Optional, Dict, Any
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from application.schem import AplicationRequest, ApplicationScheme
-from services.bot.bot_aiogram import send_application_notifications, send_message
-from app.services.database.models.applications import Applications, Users
 from app.services.database.models.admin import Admins
-
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
+from app.cors.settings import settings
+
+
+async def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.EXPAIR_ACCSES_TIME)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.TOKEN_ENCODE_ALGORITHM)
+    return encoded_jwt
+
+
+async def verify_token(token: str) -> Optional[Dict[str, Any]]:
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.TOKEN_ENCODE_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        print("Токен истёк")
+        return None
+    except jwt.InvalidTokenError as e:
+        print(f"Неверный токен: {e}")
+        return None
+
+
+async def get_user_id_from_token(token: str) -> Optional[int]:
+    payload = await verify_token(token)
+    if not payload:
+        return None
+    return payload.get("user_id")
 
 
 class MyAuthBackend(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
-        """Вызывается при попытке входа в SQLAdmin"""
+        """Вызывается при входе в SQLAdmin"""
         form = await request.form()
         username = form.get("username")
         password = form.get("password")
-        print(f"Login attempt: {username}")
-        admin = await Admins.objects.get_by_field("user_name", username)
-        if not admin:
-            print("Admin not found")
+        if not username or not password:
             return False
-        if admin.password != password:
-            print("Invalid password")
+        admin = await Admins.objects.get_by_field("user_name" , username)
+        if not admin or admin.password != password:
             return False
-        request.session.update({
-            "user_id": str(admin.id),
-            })
-        print(f"Login successful for {request.session}")
-        return True
-
-    async def logout(self, request: Request) -> bool:
-        """Вызывается при выходе из SQLAdmin"""
-        request.session.clear()
-        print("Logout completed")
+        access_token = await create_access_token({"user_id" : admin.id})
+        request.session["token"] = access_token
         return True
 
     async def authenticate(self, request: Request) -> bool:
-        """Проверяет аутентификацию для каждого запроса SQLAdmin"""
-        print(f"Authenticate called for: {request.url.path}")
-        print(f"Все ключи в request.session: {list(request.session.keys())}")
-        print(f"Session data: {request.session}")
-        if "user_id" in request.session.keys():
-            root_id : Optional[int] = int(request.session.get("user_id"))
-            if not root_id:
-                return False
-            root : Optional[Admins] = await Admins.objects.get(root_id)
-            if not root:
-                return False
-            return True
-        return False
+        """Проверяет аутентификацию для каждого запроса"""
+        token : Optional[dict] = request.session.get("token")
+        if not token: return False
+        user_id : Optional[int] = await get_user_id_from_token(token)
+        if not user_id:
+            return False
+        try:
+            user_id = int(user_id)
+            admin = await Admins.objects.get(user_id)
+            return admin is not None
+        except (ValueError, TypeError):
+            return False
+
+    async def logout(self, request: Request) -> bool:
+        """Очистка сессии при выходе"""
+        request.session.clear()
+        return True

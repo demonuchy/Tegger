@@ -29,6 +29,7 @@ class Settings(BaseSettings):
 
     TOKEN_ENCODE_ALGORITHM : str
     JWT_SECRET_KEY : str
+    EXPAIR_ACCSES_TIME : int
 
     @property
     def AsyncDataBaseUrl(self):

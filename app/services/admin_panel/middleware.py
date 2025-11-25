@@ -19,7 +19,7 @@ from services.database.config import async_session
 class AdminAuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         print("🔍 2. AdminAuthMiddleware: проверяю права")
-        if request.url.path.startswith("/admin"):
+        if request.url.path == "/admin":
             user_id = request.query_params.get("user_id")
             if not user_id:
                 return JSONResponse({"details": "user_id не передан"}, status_code=400)
@@ -28,7 +28,7 @@ class AdminAuthMiddleware(BaseHTTPMiddleware):
                 return JSONResponse({"details": "root не передан"}, status_code=404)
             if not root.is_admin:
                 return JSONResponse({"details": "не хватает прав"}, status_code=403)
-            request.session.update({"telegram_id" : user_id})
+            print(await request.body())
             print(request.session, request.url.path)
         response = await call_next(request)
         return response
