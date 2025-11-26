@@ -1249,7 +1249,6 @@ body {
 
 
 
-
 /* Стили для полноэкранной камеры */
 .camera-fullscreen {
   position: fixed;
@@ -1276,8 +1275,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 350px;
-  height: 250px;
+  width: 350px;    /* Ширина */
+  height: 490px;   /* Высота увеличена в 1.4 раза (350 × 1.4 = 490) */
   border: 3px solid var(--primary);
   border-radius: 8px;
   z-index: 2001;
@@ -1295,7 +1294,7 @@ body {
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8);
 }
 
-/* Угловые маркеры - исправленный синтаксис */
+/* Угловые маркеры */
 .frame-guide::before {
   content: '';
   position: absolute;
@@ -1391,7 +1390,7 @@ body {
 
 .captured-image-fullscreen {
   width: 350px;
-  height: 250px;
+  height: 490px;
   border-radius: 8px;
   border: 3px solid var(--primary);
   box-shadow: 0 8px 32px rgba(255, 165, 0, 0.3);
@@ -1464,7 +1463,7 @@ body {
 
 .detection-status {
   position: absolute;
-  bottom: -60px;
+  bottom: -70px; /* Увеличили отступ для высокой рамки */
   left: 50%;
   transform: translateX(-50%);
   color: var(--primary);
@@ -1509,28 +1508,28 @@ body {
 /* Адаптивность для мобильных устройств */
 @media (max-width: 480px) {
   .camera-frame {
-    width: 300px;
-    height: 214px;
+    width: 280px;
+    height: 392px; /* 280 × 1.4 = 392 */
   }
   
   .captured-image-fullscreen {
-    width: 300px;
-    height: 214px;
+    width: 280px;
+    height: 392px;
   }
 }
 
 @media (max-height: 700px) {
   .camera-frame {
-    width: 280px;
-    height: 200px;
+    width: 250px;
+    height: 350px; /* 250 × 1.4 = 350 */
   }
   
   .captured-image-fullscreen {
-    width: 280px;
-    height: 200px;
+    width: 250px;
+    height: 350px;
   }
   
   .preview-controls-fullscreen {
     bottom: 20px;
   }
-}   
+}

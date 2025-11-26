@@ -124,16 +124,6 @@ const PersonalCabinet = () => {
           {/* Кнопка закрытия */}
           <button onClick={handleCloseCamera} className="close-camera-btn-fullscreen">✗</button>
           {/* Управление для превью */}
-          {capturedImage && (
-            <div className="preview-controls-fullscreen">
-              <button onClick={handleRetake} className="control-btn retake">
-                🔄 Переснять
-              </button>
-              <button onClick={handleConfirm} className="control-btn confirm">
-                ✅ Подтвердить
-              </button>
-            </div>
-          )}
         </div>
       )}
 
