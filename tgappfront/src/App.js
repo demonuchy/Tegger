@@ -5,14 +5,16 @@ import Error from './components/ErrorScreen';
 import { UserProvider, useUser } from './contexts/UserContext';
 import Application from './components/Application';
 import LoadingSpinner from './components/LoaderSpiner';
+import StandaloneCamera from './components/StandaloneCamera';
 import Home from './components/Home';
 import './App.css';
 
 
 // Компонент для проверки готовности приложения
 const AppInitializer = ({ children }) => {
-  const { isLoading, userData, error } = useUser();
-
+  //const { isLoading, userData, error } = useUser();
+  const isLoading = false
+  const error = false
   if (isLoading) {
     return (
       <LoadingSpinner 
@@ -34,7 +36,9 @@ const AppInitializer = ({ children }) => {
 
 // Компонент для маршрутизации
 const AppRoutes = () => {
-  const { userData } = useUser();
+  //const { userData } = useUser();
+  const userData = {}
+
 
   return (
     <Routes>
@@ -51,6 +55,10 @@ const AppRoutes = () => {
         element={
           <Navigate to={userData ? "/home" : "/application"} replace />
         } 
+      />
+       <Route 
+        path="/camera" 
+        element={<StandaloneCamera />} 
       />
       <Route 
         path="*" 

@@ -266,39 +266,308 @@ export const useDocumentScanner = () => {
 
 
 
-
-// hooks/useSimpleDocumentDetection.js
-import { useState, useCallback, useRef, useEffect } from 'react';
-
-export const useSimpleDocumentDetection = () => {
+/*
+export const useOpenCvDocumentDetection = () => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const cameraRef = useRef(null);
   const canvasRef = useRef(null);
   const detectionIntervalRef = useRef(null);
   const [detectedObjects, setDetectedObjects] = useState([]);
+  const [isOpenCvReady, setIsOpenCvReady] = useState(false);
 
-  const startCamera = useCallback(() => {
-    console.log('📷 Запуск камеры с простым детектором');
-    setIsCameraActive(true);
+  // Константы для рамки документа
+  const FRAME_WIDTH = 350;
+  const FRAME_HEIGHT = 490;
+  const FRAME_MARGIN = 40;
+
+  // Инициализация OpenCV
+  useEffect(() => {
+    if (window.cv) {
+      setIsOpenCvReady(true);
+    } else {
+      window.onOpenCvReady = () => {
+        console.log('✅ OpenCV.js загружен');
+        setIsOpenCvReady(true);
+      };
+    }
+  }, []);
+
+  const detectDocumentWithOpenCV = useCallback((ctx, width, height, frameX, frameY) => {
+    if (!window.cv) {
+      console.log('❌ OpenCV не загружен');
+      return { objects: [] };
+    }
+
+    try {
+      const src = new cv.Mat(height, width, cv.CV_8UC4);
+      const frameRoi = new cv.Rect(frameX, frameY, FRAME_WIDTH, FRAME_HEIGHT);
+      
+      // Получаем изображение с canvas
+      const imageData = ctx.getImageData(0, 0, width, height);
+      src.data.set(imageData.data);
+      
+      // Работаем только с областью рамки
+      const roi = src.roi(frameRoi);
+      
+      const objects = [];
+      
+      // 1. Обнаружение контуров
+      const contours = findContoursWithOpenCV(roi);
+      
+      // 2. Анализ прямоугольников
+      const rectangles = findRectanglesWithOpenCV(contours);
+      
+      // 3. Анализ текстуры и яркости
+      const textureAnalysis = analyzeTextureWithOpenCV(roi);
+      
+      // 4. Сравнение с областью вокруг рамки
+      const outerRoi = getOuterRoi(src, width, height, frameX, frameY);
+      const comparison = compareAreasWithOpenCV(roi, outerRoi);
+      
+      // Формируем результаты
+      if (rectangles.length > 0) {
+        objects.push({
+          type: 'rectangle_opencv',
+          count: rectangles.length,
+          confidence: Math.min(rectangles.length * 25, 95),
+          rectangles: rectangles
+        });
+      }
+      
+      if (comparison.contrastDifference > 30) {
+        objects.push({
+          type: 'contrast_difference_opencv',
+          confidence: Math.min(comparison.contrastDifference, 90),
+          value: comparison.contrastDifference
+        });
+      }
+      
+      if (comparison.brightnessDifference > 20) {
+        objects.push({
+          type: 'brightness_difference_opencv',
+          confidence: Math.min(comparison.brightnessDifference * 2, 85),
+          value: comparison.brightnessDifference
+        });
+      }
+      
+      if (textureAnalysis.edgeDensity > 0.1) {
+        objects.push({
+          type: 'high_texture_opencv',
+          confidence: Math.min(textureAnalysis.edgeDensity * 100, 80),
+          density: textureAnalysis.edgeDensity
+        });
+      }
+      
+      // Освобождаем память
+      src.delete();
+      roi.delete();
+      if (outerRoi) outerRoi.delete();
+      contours.forEach(contour => contour.delete());
+      
+      return { objects };
+      
+    } catch (error) {
+      console.error('❌ Ошибка OpenCV:', error);
+      return { objects: [] };
+    }
+  }, [FRAME_WIDTH, FRAME_HEIGHT, FRAME_MARGIN]);
+
+  const findContoursWithOpenCV = (src) => {
+    const gray = new cv.Mat();
+    const edges = new cv.Mat();
+    const contours = new cv.MatVector();
+    const hierarchy = new cv.Mat();
     
-    setTimeout(() => {
-      startSimpleDetection();
-    }, 1000);
-  }, []);
+    try {
+      // Конвертируем в grayscale
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+      
+      // Гауссово размытие для уменьшения шума
+      const blurred = new cv.Mat();
+      cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
+      
+      // Детекция краев Canny
+      cv.Canny(blurred, edges, 50, 150, 3, false);
+      
+      // Находим контуры
+      cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+      
+      // Копируем контуры для возврата
+      const resultContours = [];
+      for (let i = 0; i < contours.size(); i++) {
+        const contour = contours.get(i);
+        resultContours.push(contour);
+      }
+      
+      return resultContours;
+      
+    } finally {
+      // Освобождаем память
+      gray.delete();
+      edges.delete();
+      hierarchy.delete();
+    }
+  };
 
-  const stopCamera = useCallback(() => {
-    console.log('🛑 Остановка камеры');
-    setIsCameraActive(false);
-    stopDetection();
-  }, []);
+  const findRectanglesWithOpenCV = (contours) => {
+    const rectangles = [];
+    const minArea = FRAME_WIDTH * FRAME_HEIGHT * 0.3; // Минимальная площадь 30% от рамки
+    
+    contours.forEach(contour => {
+      const area = cv.contourArea(contour);
+      
+      if (area > minArea) {
+        const approx = new cv.Mat();
+        const epsilon = 0.02 * cv.arcLength(contour, true);
+        
+        // Аппроксимируем контур
+        cv.approxPolyDP(contour, approx, epsilon, true);
+        
+        // Проверяем, является ли прямоугольником (4 угла)
+        if (approx.rows === 4) {
+          const rect = cv.boundingRect(approx);
+          
+          // Проверяем соотношение сторон (примерно как у документа)
+          const aspectRatio = rect.width / rect.height;
+          if (aspectRatio > 0.6 && aspectRatio < 1.4) {
+            rectangles.push({
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+              area: area,
+              aspectRatio: aspectRatio,
+              confidence: Math.min((area / (FRAME_WIDTH * FRAME_HEIGHT)) * 100, 95)
+            });
+          }
+        }
+        
+        approx.delete();
+      }
+    });
+    
+    return rectangles;
+  };
 
+  const analyzeTextureWithOpenCV = (src) => {
+    const gray = new cv.Mat();
+    const edges = new cv.Mat();
+    
+    try {
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+      
+      // Оператор Лапласиана для анализа текстуры
+      const laplacian = new cv.Mat();
+      cv.Laplacian(gray, laplacian, cv.CV_64F);
+      
+      // Вычисляем дисперсию Лапласиана как меру текстуры
+      const mean = new cv.Mat();
+      const stddev = new cv.Mat();
+      cv.meanStdDev(laplacian, mean, stddev);
+      
+      const textureValue = stddev.doubleAt(0, 0);
+      
+      // Детекция краев для плотности краев
+      cv.Canny(gray, edges, 50, 150, 3, false);
+      const edgePixels = cv.countNonZero(edges);
+      const edgeDensity = edgePixels / (src.rows * src.cols);
+      
+      return {
+        texture: textureValue,
+        edgeDensity: edgeDensity
+      };
+      
+    } finally {
+      gray.delete();
+      edges.delete();
+    }
+  };
+
+  const getOuterRoi = (src, width, height, frameX, frameY) => {
+    const outerX = Math.max(0, frameX - FRAME_MARGIN);
+    const outerY = Math.max(0, frameY - FRAME_MARGIN);
+    const outerWidth = Math.min(width - outerX, FRAME_WIDTH + (FRAME_MARGIN * 2));
+    const outerHeight = Math.min(height - outerY, FRAME_HEIGHT + (FRAME_MARGIN * 2));
+    
+    if (outerWidth <= 0 || outerHeight <= 0) return null;
+    
+    const outerRect = new cv.Rect(outerX, outerY, outerWidth, outerHeight);
+    return src.roi(outerRect);
+  };
+
+  const compareAreasWithOpenCV = (innerRoi, outerRoi) => {
+    if (!outerRoi) return { contrastDifference: 0, brightnessDifference: 0 };
+    
+    const innerGray = new cv.Mat();
+    const outerGray = new cv.Mat();
+    
+    try {
+      cv.cvtColor(innerRoi, innerGray, cv.COLOR_RGBA2GRAY);
+      cv.cvtColor(outerRoi, outerGray, cv.COLOR_RGBA2GRAY);
+      
+      // Сравниваем яркость
+      const innerMean = cv.mean(innerGray);
+      const outerMean = cv.mean(outerGray);
+      const brightnessDifference = Math.abs(innerMean[0] - outerMean[0]);
+      
+      // Сравниваем контраст (стандартное отклонение)
+      const innerStddev = new cv.Mat();
+      const outerStddev = new cv.Mat();
+      const innerMeanMat = new cv.Mat();
+      const outerMeanMat = new cv.Mat();
+      
+      cv.meanStdDev(innerGray, innerMeanMat, innerStddev);
+      cv.meanStdDev(outerGray, outerMeanMat, outerStddev);
+      
+      const contrastDifference = Math.abs(innerStddev.doubleAt(0, 0) - outerStddev.doubleAt(0, 0));
+      
+      return {
+        brightnessDifference: brightnessDifference,
+        contrastDifference: contrastDifference
+      };
+      
+    } finally {
+      innerGray.delete();
+      outerGray.delete();
+    }
+  };
+
+  const analyzeFrame = useCallback((video) => {
+    if (!isOpenCvReady) {
+      console.log('⏳ OpenCV загружается...');
+      return;
+    }
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Рисуем весь видео-кадр на canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Вычисляем координаты рамки по центру
+    const frameX = (canvas.width - FRAME_WIDTH) / 2;
+    const frameY = (canvas.height - FRAME_HEIGHT) / 2;
+    
+    // Используем OpenCV для анализа
+    const analysis = detectDocumentWithOpenCV(ctx, canvas.width, canvas.height, frameX, frameY);
+    
+    if (analysis.objects.length > 0) {
+      console.log('🎯 OpenCV обнаружены объекты:', analysis.objects);
+      setDetectedObjects(analysis.objects);
+    } else {
+      setDetectedObjects([]);
+    }
+  }, [FRAME_WIDTH, FRAME_HEIGHT, detectDocumentWithOpenCV, isOpenCvReady]);
+
+  // Остальные функции остаются такими же
   const startSimpleDetection = useCallback(() => {
     if (!cameraRef.current || !cameraRef.current.video) {
       console.log('❌ Камера не готова');
       return;
     }
 
-    // Создаем скрытый canvas для анализа
     if (!canvasRef.current) {
       canvasRef.current = document.createElement('canvas');
     }
@@ -316,213 +585,8 @@ export const useSimpleDocumentDetection = () => {
       } catch (error) {
         console.error('❌ Ошибка анализа:', error);
       }
-    }, 1000); // Анализируем каждый секунду
-  }, []);
-
-  const analyzeFrame = (video) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    
-    // Устанавливаем размеры canvas как у видео
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    // Рисуем текущий кадр видео на canvas
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // Получаем данные изображения
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    
-    // Анализируем кадр
-    const analysis = analyzeImageData(data, canvas.width, canvas.height);
-    
-    // Выводим результаты в консоль
-    if (analysis.objects.length > 0) {
-      console.log('🎯 Обнаружены объекты:', analysis.objects);
-      setDetectedObjects(analysis.objects);
-    }
-  };
-
-  const analyzeImageData = (data, width, height) => {
-    const objects = [];
-    
-    // 1. Обнаружение контрастных областей
-    const contrastAreas = findContrastAreas(data, width, height);
-    
-    // 2. Обнаружение прямоугольных форм
-    const rectangles = findRectangles(data, width, height);
-    
-    // 3. Обнаружение однородных цветовых областей
-    const uniformAreas = findUniformAreas(data, width, height);
-    
-    // Комбинируем результаты
-    if (contrastAreas.length > 0) {
-      objects.push({
-        type: 'contrast_area',
-        count: contrastAreas.length,
-        confidence: Math.min(contrastAreas.length * 10, 90)
-      });
-    }
-    
-    if (rectangles.length > 0) {
-      objects.push({
-        type: 'rectangle',
-        count: rectangles.length,
-        confidence: Math.min(rectangles.length * 15, 95)
-      });
-    }
-    
-    if (uniformAreas.length > 0) {
-      objects.push({
-        type: 'uniform_area', 
-        count: uniformAreas.length,
-        confidence: Math.min(uniformAreas.length * 12, 85)
-      });
-    }
-    
-    return { objects };
-  };
-
-  const findContrastAreas = (data, width, height) => {
-    const areas = [];
-    const blockSize = 20; // Размер блока для анализа
-    const contrastThreshold = 50; // Порог контраста
-    
-    for (let y = 0; y < height - blockSize; y += blockSize) {
-      for (let x = 0; x < width - blockSize; x += blockSize) {
-        const contrast = calculateBlockContrast(data, width, x, y, blockSize);
-        if (contrast > contrastThreshold) {
-          areas.push({ x, y, contrast });
-        }
-      }
-    }
-    
-    return areas;
-  };
-
-  const calculateBlockContrast = (data, width, startX, startY, size) => {
-    let minLuminance = 255;
-    let maxLuminance = 0;
-    
-    for (let y = startY; y < startY + size; y++) {
-      for (let x = startX; x < startX + size; x++) {
-        const index = (y * width + x) * 4;
-        const r = data[index];
-        const g = data[index + 1];
-        const b = data[index + 2];
-        
-        // Вычисляем luminance (яркость)
-        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-        
-        minLuminance = Math.min(minLuminance, luminance);
-        maxLuminance = Math.max(maxLuminance, luminance);
-      }
-    }
-    
-    return maxLuminance - minLuminance;
-  };
-
-  const findRectangles = (data, width, height) => {
-    const rectangles = [];
-    
-    // Упрощенный алгоритм поиска краев
-    const edges = findEdges(data, width, height);
-    
-    // Ищем прямоугольные формы среди краев
-    for (let edge of edges) {
-      if (isRectangleLike(edge)) {
-        rectangles.push(edge);
-      }
-    }
-    
-    return rectangles;
-  };
-
-  const findEdges = (data, width, height) => {
-    const edges = [];
-    const edgeThreshold = 30;
-    
-    for (let y = 1; y < height - 1; y += 3) { // Увеличили шаг для производительности
-      for (let x = 1; x < width - 1; x += 3) {
-        const gradient = calculateGradient(data, width, x, y);
-        if (gradient > edgeThreshold) {
-          edges.push({ x, y, gradient });
-        }
-      }
-    }
-    
-    return edges;
-  };
-
-  const calculateGradient = (data, width, x, y) => {
-    const index = (y * width + x) * 4;
-    
-    // Простой оператор Собеля для обнаружения краев
-    let gradientX = 0;
-    let gradientY = 0;
-    
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) {
-        const currentIndex = ((y + dy) * width + (x + dx)) * 4;
-        const luminance = 0.299 * data[currentIndex] + 0.587 * data[currentIndex + 1] + 0.114 * data[currentIndex + 2];
-        
-        // Ядра Собеля
-        gradientX += luminance * (dx === -1 ? -1 : dx === 1 ? 1 : dx === 0 ? 0 : 2 * dx);
-        gradientY += luminance * (dy === -1 ? -1 : dy === 1 ? 1 : dy === 0 ? 0 : 2 * dy);
-      }
-    }
-    
-    return Math.sqrt(gradientX * gradientX + gradientY * gradientY);
-  };
-
-  const isRectangleLike = (edge) => {
-    // Простая проверка - если есть достаточно краев в области, считаем прямоугольником
-    return edge.gradient > 40;
-  };
-
-  const findUniformAreas = (data, width, height) => {
-    const areas = [];
-    const blockSize = 25;
-    const uniformityThreshold = 15;
-    
-    for (let y = 0; y < height - blockSize; y += blockSize) {
-      for (let x = 0; x < width - blockSize; x += blockSize) {
-        const uniformity = calculateBlockUniformity(data, width, x, y, blockSize);
-        if (uniformity < uniformityThreshold) {
-          areas.push({ x, y, uniformity });
-        }
-      }
-    }
-    
-    return areas;
-  };
-
-  const calculateBlockUniformity = (data, width, startX, startY, size) => {
-    let totalLuminance = 0;
-    let luminanceSquares = 0;
-    let count = 0;
-    
-    for (let y = startY; y < startY + size; y += 2) {
-      for (let x = startX; x < startX + size; x += 2) {
-        const index = (y * width + x) * 4;
-        const r = data[index];
-        const g = data[index + 1];
-        const b = data[index + 2];
-        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-        totalLuminance += luminance;
-        luminanceSquares += luminance * luminance;
-        count++;
-      }
-    }
-    
-    if (count === 0) return 100;
-    
-    const mean = totalLuminance / count;
-    const variance = (luminanceSquares / count) - (mean * mean);
-    
-    return Math.sqrt(variance); // Стандартное отклонение - мера неоднородности
-  };
+    }, 1000);
+  }, [analyzeFrame]);
 
   const stopDetection = useCallback(() => {
     console.log('🛑 Остановка обнаружения');
@@ -531,6 +595,21 @@ export const useSimpleDocumentDetection = () => {
       detectionIntervalRef.current = null;
     }
   }, []);
+
+  const startCamera = useCallback(() => {
+    console.log('📷 Запуск камеры с OpenCV детектором');
+    setIsCameraActive(true);
+    
+    setTimeout(() => {
+      startSimpleDetection();
+    }, 1000);
+  }, [startSimpleDetection]);
+
+  const stopCamera = useCallback(() => {
+    console.log('🛑 Остановка камеры');
+    setIsCameraActive(false);
+    stopDetection();
+  }, [stopDetection]);
 
   useEffect(() => {
     return () => {
@@ -543,6 +622,8 @@ export const useSimpleDocumentDetection = () => {
     cameraRef,
     startCamera,
     stopCamera,
-    detectedObjects
+    detectedObjects,
+    isOpenCvReady
   };
 };
+*/
