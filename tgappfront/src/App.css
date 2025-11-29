@@ -1461,9 +1461,8 @@ body {
   box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4);
 }
 
-.detection-status {
+.detect-status {
   position: absolute;
-  bottom: -70px; /* Увеличили отступ для высокой рамки */
   left: 50%;
   transform: translateX(-50%);
   color: var(--primary);
@@ -1551,18 +1550,16 @@ body {
 
 
 
-/*Test camera analys*/
-/* Стили для standalone камеры */
-.standalone-camera-page {
+/* DocumentProcessor.css */
+
+.document-processor {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: black;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
 }
 
-/* Полноэкранная камера */
+
 .camera-fullscreen {
   position: fixed;
   top: 0;
@@ -1570,157 +1567,193 @@ body {
   width: 100vw;
   height: 100vh;
   background: black;
-  z-index: 1000;
-}
-
-.webcam-fullscreen {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Рамка для полноэкранной камеры */
-.frame-overlay-fullscreen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-}
-
-.frame-guide-fullscreen {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 350px;
-  height: 490px;
-  border: 3px solid #00ff00;
-  border-radius: 10px;
-  background: transparent;
-  box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.4);
-}
-
-.frame-instruction-fullscreen {
-  position: absolute;
-  top: calc(50% + 260px);
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-}
-
-/* Управление камерой на полноэкранном режиме */
-.camera-controls-fullscreen {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 15px;
-  z-index: 1001;
-}
-
-.capture-btn-fullscreen {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.stop-camera-btn-fullscreen {
-  background: #f44336;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Предпросмотр фото на полноэкранном режиме */
-.preview-fullscreen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: black;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.captured-image-fullscreen {
-  max-width: 90%;
-  max-height: 70%;
-  object-fit: contain;
-  border-radius: 10px;
+.webcam-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.photo-controls-fullscreen {
+.camera-overlay {
   position: absolute;
-  bottom: 30px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.frame-guide {
+  width: 350px;
+  height: 490px;
+  border: 3px solid #00ff00;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 10;
+}
+
+.frame-instruction {
+  position: absolute;
+  top: calc(50% + 260px);
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  gap: 15px;
-}
-
-.download-btn-fullscreen {
-  background: #2196F3;
   color: white;
-  border: none;
-  padding: 12px 25px;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
   border-radius: 20px;
-  cursor: pointer;
-  font-size: 16px;
+  pointer-events: none;
+  z-index: 11;
 }
 
-.retake-btn-fullscreen {
-  background: #FF9800;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 16px;
+.camera-controls {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
 }
 
-.close-btn-fullscreen {
+.capture-button {
   background: #4CAF50;
   color: white;
   border: none;
-  padding: 12px 25px;
-  border-radius: 20px;
+  padding: 20px 40px;
+  border-radius: 30px;
+  font-size: 20px;
+  font-weight: bold;
   cursor: pointer;
-  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Адаптивность для полноэкранного режима */
+.capture-button:hover {
+  background: #45a049;
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+
+.photo-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.preview-image {
+  max-width: 90%;
+  max-height: 80%;
+  object-fit: contain;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.preview-controls {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.control-button {
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  min-width: 180px;
+}
+
+.download-button {
+  background: #2196F3;
+  color: white;
+}
+
+.download-button:hover {
+  background: #1976D2;
+  transform: scale(1.05);
+}
+
+.retake-button {
+  background: #FF9800;
+  color: white;
+}
+
+.retake-button:hover {
+  background: #F57C00;
+  transform: scale(1.05);
+}
+
 @media (max-width: 768px) {
-  .frame-guide-fullscreen {
+  .frame-guide {
     width: 300px;
     height: 420px;
   }
   
-  .frame-instruction-fullscreen {
+  .frame-instruction {
     top: calc(50% + 220px);
     font-size: 16px;
   }
   
-  .camera-controls-fullscreen,
-  .photo-controls-fullscreen {
+  .capture-button {
+    padding: 15px 30px;
+    font-size: 18px;
+  }
+  
+  .control-button {
+    padding: 12px 25px;
+    font-size: 16px;
+    min-width: 160px;
+  }
+  
+  .preview-controls {
     flex-direction: column;
     align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .frame-guide {
+    width: 280px;
+    height: 390px;
+  }
+  
+  .frame-instruction {
+    top: calc(50% + 200px);
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  
+  .capture-button {
+    padding: 12px 25px;
+    font-size: 16px;
+  }
+  
+  .control-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    min-width: 140px;
   }
 }

@@ -1,74 +1,46 @@
 // components/UserProfile.js
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { useUser } from '../contexts/UserContext';
-import { useDocumentScanner } from '../hooks/useDocumentScanner';
+import { useAdvancedDocumentDetector } from '../hooks/useOpneCvDocumentDetector';
 
 const PersonalCabinet = () => {
   const { userData, telegramUser } = useUser();
-  const { 
-    isCameraActive, 
-    cameraRef, 
-    startCamera, 
-    stopCamera, 
-    startDocumentDetection,
-    stopDocumentDetection,
-    modelLoaded 
-  } = useDocumentScanner();
-  
-  const [capturedImage, setCapturedImage] = useState(null);
-  const [detectionStatus, setDetectionStatus] = useState('Ожидание документа...');
+  const cameraRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  // Обработчик обнаружения документа
-  const handleDocumentDetected = useCallback((image) => {
-    console.log('Документ обнаружен!', image);
-    setCapturedImage(image);
-    setDetectionStatus('Документ распознан!');
+  const [isCameraActive, setIsCameraActive] = useState(false)
+  const { capturePhoto, detectionResult}  = useAdvancedDocumentDetector(cameraRef, canvasRef)
+  // const { detect, initialize, cleanup, isInitialized } = usePassportDetector();
+
+  useEffect(() => {6 
+    if (isCameraActive) {
+      setInterval(()=>{
+        capturePhoto();
+        console.log("это паспорт на", detectionResult)
+      }, 500)
+    } else {
+      console.log('Стоп обнаружения документа');
+    }
+    return () => {
+      console.log('Стоп обнаружения документа');
+    };
+  }, [isCameraActive, detectionResult, capturePhoto]);
+
+
+  useEffect(() => {
+    if(!canvasRef.current){
+      canvasRef.current = document.createElement('canvas');
+    }
   }, []);
 
-  // Запускаем обнаружение когда камера активна и модель загружена
-  useEffect(() => {
-    if (isCameraActive && modelLoaded && !capturedImage) {
-      console.log('Запуск обнаружения документа');
-      startDocumentDetection();
-      setDetectionStatus('Наведите документ на рамку...');
-    } else if (capturedImage) {
-      stopDocumentDetection();
-    }
-
-    return () => {
-      stopDocumentDetection();
-    };
-  }, [isCameraActive, modelLoaded, capturedImage, startDocumentDetection, stopDocumentDetection]);
-
   const handleScanClick = () => {
-    setCapturedImage(null);
-    setDetectionStatus('Ожидание документа...');
-    // Передаем callback для обработки обнаруженного документа
-    startCamera(handleDocumentDetected);
+      setIsCameraActive(true)
   };
 
   const handleCloseCamera = () => {
-    stopCamera();
-    stopDocumentDetection();
-    setCapturedImage(null);
-    setDetectionStatus('Ожидание документа...');
-  };
-
-  const handleRetake = () => {
-    setCapturedImage(null);
-    setDetectionStatus('Наведите документ на рамку...');
-    // Перезапускаем обнаружение после пересъемки
-    setTimeout(() => {
-      if (isCameraActive && modelLoaded) {
-        startDocumentDetection();
-      }
-    }, 100);
-  };
-
-  const handleConfirm = () => {
-    console.log('Изображение подтверждено:', capturedImage);
-    handleCloseCamera();
+    setIsCameraActive(false)
+   
   };
 
   const formatDate = (dateString) => {
@@ -85,19 +57,9 @@ const PersonalCabinet = () => {
       {/* Камера на весь экран */}
       {isCameraActive && (
         <div className="camera-fullscreen">
-          {/* Рамка показывается только когда снимок НЕ сделан */}
-          {!capturedImage && (
             <div className="camera-frame">
               <div className="frame-guide"></div>
-              {/* Статус обнаружения */}
-              <div className="detection-status">
-                {detectionStatus}
-              </div>
             </div>
-          )}
-          
-          {!capturedImage ? (
-            <>
               <Webcam
                 audio={false}
                 ref={cameraRef}
@@ -109,24 +71,10 @@ const PersonalCabinet = () => {
                 }}
                 className="camera-preview-fullscreen"
               />
-              {/* Индикатор загрузки модели */}
-              {!modelLoaded && (
-                <div className="model-loading">
-                  Загрузка системы распознавания...
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="preview-fullscreen">
-              <img src={capturedImage} alt="Captured document" className="captured-image-fullscreen" />
-            </div>
-          )}
-          {/* Кнопка закрытия */}
           <button onClick={handleCloseCamera} className="close-camera-btn-fullscreen">✗</button>
-          {/* Управление для превью */}
+          <div className='detect-status'>{detectionResult ? `${detectionResult.probability}` : 'null'}</div>
         </div>
       )}
-
       {/* Основной контент профиля */}
       <div className="profile-card">
         <div className="profile-image">
@@ -142,7 +90,7 @@ const PersonalCabinet = () => {
           
           <div className="scan-section">
             <button onClick={handleScanClick} className="scan-btn">
-              📷 Сканировать документ
+              Сканировать документ
             </button>
           </div>
           

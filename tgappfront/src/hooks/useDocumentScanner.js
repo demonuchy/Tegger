@@ -1,12 +1,13 @@
 // hooks/useDocumentScanner.js
-import { useState, useCallback, useRef, useEffect } from 'react';
-import * as cocoSsd from '@tensorflow-models/coco-ssd';
-import '@tensorflow/tfjs';
+// import { useState, useCallback, useRef, useEffect } from 'react';
+// import * as cocoSsd from '@tensorflow-models/coco-ssd';
+// import '@tensorflow/tfjs';
 
 
 
 
 export const useDocumentScanner = () => {
+  /*
   const [isCameraActive, setIsCameraActive] = useState(false);
   const cameraRef = useRef(null);
   const [model, setModel] = useState(null);
@@ -249,6 +250,7 @@ export const useDocumentScanner = () => {
     stopDocumentDetection,
     modelLoaded: !!model
   };
+  */
 };
 
 

@@ -1,186 +1,250 @@
-// components/StandaloneCamera.js
+// components/DocumentProcessor.js
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
 
-const StandaloneCamera = () => {
-  const [isCameraActive, setIsCameraActive] = useState(false);
+
+const DocumentProcessor = () => {
   const [capturedImage, setCapturedImage] = useState(null);
-  const [currentFrame, setCurrentFrame] = useState(null)
   const webcamRef = useRef(null);
-  const analysInterval = useRef(null);
-  const cavansRef = useRef(null)
- 
+  const canvasRef = useRef(null)
 
-  const startCamera = useCallback(() => {
-    setIsCameraActive(true);
-    setCapturedImage(null);
-  }, []);
 
-  const stopCamera = useCallback(() => {
-    setIsCameraActive(false);
-    if(analysInterval.current){
-        clearInterval(analysInterval.current)
-        analysInterval.current = null
-    }
-  }, []);
+  const showImage = (cv, cvMatObj) => {
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = 350;  // 350
+    tempCanvas.height = 490; // 490
 
-  const getCurrentFrame = useCallback(() => {
-    if(webcamRef.current && isCameraActive){
-        webcamRef.current.getScreenshot();
-        const imageSrc = webcamRef.current.getScreenshot();
-        const currentImg = new Image();
-        setCurrentFrame(imageSrc)
-        currentImg.onload =  () => {
-            const canvas = cavansRef.current;
-            const imgContext = canvas.getContext('2d');
-            const FRAME_HIGHT = 490;
-            const FRAME_WIDTH = 350;
-            imgContext.drawImage(currentImg, 0,0); 
-            const startFrameX = (canvas.width - FRAME_WIDTH) / 2;  // X по горизонтали (от ширины)
-            const startFrameY = (canvas.height - FRAME_HIGHT) / 2; // Y по вертикали (от высоты)
-            const imageData = imgContext.getImageData(startFrameX, startFrameY, FRAME_WIDTH, FRAME_HIGHT);
-            const { width, height, data } = imageData;
-            for (let y = 0; y < height; y++) {
-                for (let x = 0; x < width; x++) {
-                    const index = (y * width + x) * 4;
-                    const r = data[index];     // Красный
-                    const g = data[index + 1]; // Зеленый
-                    const b = data[index + 2]; // Синий
-                    const a = data[index + 3]; // Альфа
-                    console.log(`Пиксель (${x}, ${y}): RGB(${r}, ${g}, ${b})`);
+    cv.imshow(tempCanvas, cvMatObj);
+    const DataUrl = tempCanvas.toDataURL('image/jpeg');
+    setCapturedImage(DataUrl);
+  
+  }
+
+
+  function findTopLeftCorner(cleaned) {
+    const searchArea = {
+        startY: Math.floor(cleaned.rows * 0.02),
+        endY: Math.floor(cleaned.rows * 0.3),
+        startX: Math.floor(cleaned.cols * 0.02),
+        endX: Math.floor(cleaned.cols * 0.3)
+    };
+
+    for (let y = searchArea.startY; y <= searchArea.endY; y++) {
+        for (let x = searchArea.startX; x <= searchArea.endX; x++) {
+            let pixel = cleaned.ucharPtr(y, x);
+            if (pixel[0] !== 0) continue; // пропускаем белые пиксели
+
+            // Проверяем окрестность 5x5
+            let isCorner = true;
+            for (let dy = -2; dy <= 2; dy++) {
+                for (let dx = -2; dx <= 2; dx++) {
+                    let nx = x + dx;
+                    let ny = y + dy;
+                    
+                    // Проверяем границы
+                    if (nx < 0 || nx >= cleaned.cols || ny < 0 || ny >= cleaned.rows) {
+                        continue;
+                    }
+                    
+                    let neighborPixel = cleaned.ucharPtr(ny, nx);
+                    
+                    // Для левого верхнего угла ожидаем:
+                    // - Слева и сверху в основном белые пиксели
+                    // - Справа и снизу в основном черные пиксели
+                    if ((dx < 0 || dy < 0) && neighborPixel[0] !== 255) {
+                        isCorner = false;
+                        break;
+                    }
+                    if ((dx > 0 || dy > 0) && neighborPixel[0] !== 0) {
+                        isCorner = false;
+                        break;
+                    }
                 }
+                if (!isCorner) break;
+            }
+            
+            if (isCorner) {
+                return { x: x, y: y };
             }
         }
-        currentImg.src = imageSrc;
     }
+    return null;
+}
 
-  },[setCurrentFrame, isCameraActive])
+
 
   const capturePhoto = useCallback(() => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      setCapturedImage(imageSrc);
-    }
-  }, []);
+    if (webcamRef.current && window.cv) {
+        const canvas = canvasRef.current;
+        const cv = window.cv;
+        const ctx = canvas.getContext('2d');
 
+        const video = webcamRef.current.video;
+        const startX = (video.videoWidth - 350) / 2;
+        const startY = (video.videoHeight - 490) / 2;
+        
+        ctx.drawImage(video, startX, startY, 350, 490, 0, 0, 350, 490);
+        
+        const imgData = ctx.getImageData(0, 0, 350, 490);
+        const src = cv.matFromImageData(imgData);
+        
+        const originalImage = new cv.Mat();
+        src.copyTo(originalImage);
+
+        const gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGB2GRAY);
+
+        const binary = new cv.Mat();
+        cv.adaptiveThreshold(
+            gray,
+            binary,
+            255,
+            cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv.THRESH_BINARY_INV,
+            13,
+            2
+        );
+
+
+        let kernel = cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(2, 2));
+        let cleaned = new cv.Mat();
+        cv.morphologyEx(binary, cleaned, cv.MORPH_CLOSE, kernel);
+      
+
+        console.log("Вот он", pixsel)
+        cv.circle(cleaned, new cv.Point(pixsel.x, pixsel.y), 2, new cv.Scalar(255), -1);
+        showImage(cv, cleaned);
+
+        
+        /*
+        const contours = new cv.MatVector();
+        const hierarchy = new cv.Mat();
+
+
+        
+        cv.findContours(
+            binary, 
+            contours, 
+            hierarchy, 
+            cv.RETR_TREE,     
+            cv.CHAIN_APPROX_TC89_L1  // 1 CHAIN_APPROX_NONE 2 CHAIN_APPROX_TC89_L1 3 CHAIN_APPROX_TC89_KCOS
+        );
+
+        const resultImage = new cv.Mat();
+        originalImage.copyTo(resultImage);
+
+        const contoursExc = new cv.MatVector();
+        const pasportContour = new cv.MatVector();
+
+        let blackSameSize = new cv.Mat(src.rows, src.cols, cv.CV_8UC3, new cv.Scalar(0, 0, 0, 0));
+
+        for (let i = 0; i < contours.size(); i++) {
+          const contour = contours.get(i);
+          const area = cv.contourArea(contour);
+          if(area < 1500) continue;
+          console.log(`контур ${i} площадь ${area}`)
+          let approx = new cv.Mat();
+          let epsilon = 0.0001 * cv.arcLength(contour, true);
+          cv.approxPolyDP(contour, approx, epsilon, true); 
+          contoursExc.push_back(approx)
+          for (let i = 0; i < approx.rows; i++) {
+            let points = approx.data32S;
+            let x = points[i * 2];     // x координата
+            let y = points[i * 2 + 1]; // y координата  
+            let pixsel = blackSameSize.ucharPtr(y, x);
+            pixsel[0] = 255;
+            pixsel[1] = 0;
+            pixsel[2] = 0;
+            pixsel[3] = 255
+          }       
+        }  */
+       
+
+       
+
+        src.delete();
+        originalImage.delete();
+        gray.delete();
+        binary.delete();
+        // blackSameSize.delete()
+        // dilated.delete();
+        // contours.delete();
+        // hierarchy.delete();
+        // resultImage.delete();
+    }
+}, []);
+
+  // Функция для повторной съемки
   const retakePhoto = useCallback(() => {
     setCapturedImage(null);
   }, []);
 
-  // Скачивание фото
+  // Функция для скачивания фото
   const downloadPhoto = useCallback(() => {
     if (capturedImage) {
       const link = document.createElement('a');
       link.href = capturedImage;
-      link.download = 'document-photo.jpg';
+      link.download = `photo-${Date.now()}.jpg`;
       link.click();
     }
   }, [capturedImage]);
 
   useEffect(()=>{
-    cavansRef.current = document.createElement('canvas')
+    const canvas = document.createElement('canvas');
+    canvas.width = 350;
+    canvas.height = 490;
+    canvasRef.current = canvas;
   },[])
 
-  useEffect(()=>{
-    if(isCameraActive){
-        if(analysInterval.current){
-            clearTimeout(analysInterval.current)
-            analysInterval.current = null
-        }
-        analysInterval.current = setInterval(() => {
-            getCurrentFrame();
-          }, 10000);
-          getCurrentFrame();
-    }
-  }, [isCameraActive])
-
   return (
-    <div className="standalone-camera-page">
-      {/* Полноэкранная камера */}
-      {isCameraActive && (
+    <div className="document-processor">
+      {!capturedImage ? (
         <div className="camera-fullscreen">
-          {!capturedImage ? (
-            <>
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                videoConstraints={{
-                  facingMode: 'environment',
-                  width: { ideal: 1920 },
-                  height: { ideal: 1080 }
-                }}
-                className="webcam-fullscreen"
-              />
-              
-              {/* Рамка документа */}
-              <div className="frame-overlay-fullscreen">
-                <div className="frame-guide-fullscreen"></div>
-                <div className="frame-instruction-fullscreen">
-                  Поместите документ в рамку
-                </div>
-              </div>
-
-              {/* Кнопки управления */}
-              <div className="camera-controls-fullscreen">
-                <button 
-                  onClick={capturePhoto}
-                  className="capture-btn-fullscreen"
-                >
-                  📷 Сфотографировать
-                </button>
-                <button 
-                  onClick={stopCamera}
-                  className="stop-camera-btn-fullscreen"
-                >
-                  ❌ Закрыть камеру
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="preview-fullscreen">
-              <img 
-                src={capturedImage} 
-                alt="Captured document" 
-                className="captured-image-fullscreen"
-              />
-              <div className="photo-controls-fullscreen">
-                <button 
-                  onClick={downloadPhoto}
-                  className="download-btn-fullscreen"
-                >
-                  💾 Скачать фото
-                </button>
-                <button 
-                  onClick={retakePhoto}
-                  className="retake-btn-fullscreen"
-                >
-                  🔄 Снять заново
-                </button>
-                <button 
-                  onClick={stopCamera}
-                  className="close-btn-fullscreen"
-                >
-                  ✅ Готово
-                </button>
-              </div>
+          <Webcam
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            videoConstraints={{
+              facingMode: 'environment',
+              width: { ideal: 1920 },
+              height: { ideal: 1080 }
+            }}
+            className="webcam-video"
+          />
+          <div className="camera-overlay">
+            <div className="frame-guide"></div>
+            <div className="frame-instruction">
+              Поместите документ в рамку
             </div>
-          )}
-        </div>
-      )}
-
-      {/* Главная страница (только когда камера закрыта) */}
-      {!isCameraActive && (
-        <div className="camera-container">
-          <h1>📷 Сканирование документов</h1>
-          <p>Сфотографируйте ваш документ для дальнейшей обработки</p>
-
-          <div className="camera-start-section">
+          </div>
+          <div className="camera-controls">
             <button 
-              onClick={startCamera}
-              className="start-camera-btn"
+              className="capture-button"
+              onClick={capturePhoto}
             >
-              📸 Открыть камеру
+              📸 Сделать фото
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="photo-preview">
+          <img 
+            src={capturedImage} 
+            alt="Сфотографированное изображение" 
+            className="preview-image"
+          />
+          <div className="preview-controls">
+            <button 
+              className="control-button download-button"
+              onClick={downloadPhoto}
+            >
+              💾 Скачать фото
+            </button>
+            <button 
+              className="control-button retake-button"
+              onClick={retakePhoto}
+            >
+              🔄 Снять заново
             </button>
           </div>
         </div>
@@ -189,4 +253,4 @@ const StandaloneCamera = () => {
   );
 };
 
-export default StandaloneCamera;
+export default DocumentProcessor;
