@@ -13,6 +13,7 @@ from app.services.user.views import user_router, private_user_router, private_us
 from app.services.application.views import application_router, admin_application_router, admin_application_router_v2, public_application_router_v2
 from app.cors.settings import settings
 from app.services.database.models.applications import Users
+from app.services.database.models.user import UsersLatest
 
 
 DEV = False
@@ -92,9 +93,10 @@ class AuthMiddleware:
         print("2 Аунтификация пользователя", request)
         if DEV:
             return request
-        user = await Users.objects.get_by_field("telegram_id", user_id)
+        user = await UsersLatest.objects.get_by_field("telegram_id", user_id)
         if not user:
             raise HTTPException(detail="Вы не зарегестрированны", status_code=401)
+        request.state.user_id = int(user.id)
         return user
 
 
@@ -108,20 +110,26 @@ class AdminPermissionMiddleware:
             raise HTTPException(detail="Недостаточно прав", status_code=403)
         return user
 
-
+# Router V1
 puplic_router = APIRouter(prefix="/api", tags=["puplic"], dependencies=[Depends(CheckTelegramMiddleware())])
 private_router = APIRouter(prefix="/api", tags=["private"], dependencies=[Depends(AuthMiddleware())])
 admin_router  = APIRouter(prefix="/api/admin", tags=["admin"], dependencies=[Depends(AdminPermissionMiddleware())])
 
-
 puplic_router.include_router(user_router)
 puplic_router.include_router(application_router)
-puplic_router.include_router(public_application_router_v2)
-
 
 private_router.include_router(private_user_router)
-private_router.include_router(private_user_router_v2)
-
 
 admin_router.include_router(admin_application_router)
-admin_router.include_router(admin_application_router_v2)
+
+#Router V2
+puplic_router_v2 = APIRouter(prefix="/api/v2", tags=["puplic"], dependencies=[Depends(CheckTelegramMiddleware())])
+private_router_v2 = APIRouter(prefix="/api/v2", tags=["private"], dependencies=[Depends(AuthMiddleware())])
+admin_router_v2  = APIRouter(prefix="/api/v2/admin", tags=["admin"], dependencies=[Depends(AdminPermissionMiddleware())])
+
+
+puplic_router_v2.include_router(public_application_router_v2)
+
+private_router_v2.include_router(private_user_router_v2)
+
+admin_router_v2.include_router(admin_application_router_v2)

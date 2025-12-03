@@ -3,7 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import useApi from '../hooks/useAPI';
 
 const Applications = () => {
-    const { getActiveApplications, updateApplicationStatus } = useApi();
+    const { getActiveApplications, updateApplicationStatus, updateApplicationStatusV2 } = useApi();
     const [applications, setApplications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -59,8 +59,7 @@ const Applications = () => {
     const handleUpdateStatus = async (applicationId, status) => {
         try {
             setApplications(prev => prev.filter(app => app.id !== applicationId));
-            
-            updateApplicationStatus(applicationId, status).catch(error => {
+            updateApplicationStatusV2(applicationId, status).catch(error => {
                 console.error('Error updating application status:', error);
                 alert('Не удалось обновить статус заявки на сервере');
             });

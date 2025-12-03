@@ -1,6 +1,6 @@
 import os
 import sys
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Optional
 
@@ -8,13 +8,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.database.models.applications import  Users
 from app.services.user.serializer import UserModelSerializer
-from app.services.depends import get_user_service
+from app.services.user.deps import get_user_service
 from app.services.user.service import UserService
+from app.services.depends import handle_errors_wrraper
 
 
 
 user_router = APIRouter(prefix="/users")
-
 
 @user_router.get("/check/{telegram_id}")
 async def pre_check_user(telegram_id : str):
@@ -26,7 +26,6 @@ async def pre_check_user(telegram_id : str):
 
 private_user_router = APIRouter(prefix="/users")
 
-
 @private_user_router.get("/me")
 async def pre_check_user(telegram_id : str):
     user : Optional[Users] = await Users.objects.get_by_field("telegram_id", telegram_id)
@@ -37,21 +36,13 @@ async def pre_check_user(telegram_id : str):
     return JSONResponse({"details" : "Пользователь найден", "user" : user}, status_code=200)
 
 
+#Private router V2
+private_user_router_v2 = APIRouter(prefix="/users")
 
-
-
-private_user_router_v2 = APIRouter(prefix="/users/v2")
-
-
+@handle_errors_wrraper()
 @private_user_router_v2.get("/me")
-async def get_me(telegram_id : str, service : UserService = Depends(get_user_service)):
-    try:
-        user = await service.get_me(telegram_id)
-        return JSONResponse({"details" : "ok", "user" : user}, status_code=200)
-    except HTTPException as e:
-        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
-
-
-
-
-
+async def get_me(request : Request, service : UserService = Depends(get_user_service)):
+    user_id = request.state.user_id
+    user = await service.get_me(user_id)
+    return JSONResponse({"details" : "ok", "user" : user}, status_code=200)
+   

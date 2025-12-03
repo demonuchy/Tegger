@@ -15,19 +15,21 @@ class UsersLatest(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
     # Паспортные данные
     full_name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    passport_series : Mapped[str] = mapped_column(String, nullable=False, unique=True)
-    passport_number : Mapped[str] = mapped_column(String, nullable=False, unique=True)
-    actual_address : Mapped[str] = mapped_column(String, nullable=False)
-    address_registered : Mapped[str] = mapped_column(String, nullable=False)
+    passport_series : Mapped[str] = mapped_column(String, nullable=True, unique=True)
+    passport_number : Mapped[str] = mapped_column(String, nullable=True, unique=True)
+    actual_address : Mapped[str] = mapped_column(String, nullable=True)
+    address_registered : Mapped[str] = mapped_column(String, nullable=True)
     # доп данные
-    educational_group : Mapped[str] = mapped_column(String, nullable=False)
-    educational_faculty : Mapped[str] = mapped_column(String, nullable=False)
-    creative_skills :Mapped[str] = mapped_column(String, nullable=False)
+    educational_group : Mapped[str] = mapped_column(String, nullable=True)
+    educational_faculty : Mapped[str] = mapped_column(String, nullable=True)
+    creative_skills :Mapped[str] = mapped_column(String, nullable=True)
     phone_number: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     # Telegram данные
     telegram_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)  
     telegram_user_name: Mapped[str] = mapped_column(String, unique=True, nullable=False)  
-    # metadata
+    #vk
+    vk_username : Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    # meta
     is_active : Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     is_admin : Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     status : Mapped[str] = mapped_column(String, nullable=False , default="Кандидат")

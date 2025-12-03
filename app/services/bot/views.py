@@ -12,6 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.services.database.models.applications import Applications, Users
 from app.services.bot.serializer import UserModelSerializer
 from app.utils.excel_conventor import convert_to_excel, convert_to_excel_buffer
+from app.services.application.deps import get_application_service
 
 admin_router = Router()
 
@@ -41,8 +42,8 @@ async def admin_panel(message: Message):
     users = await Users.objects.filter()
     user_serializer = UserModelSerializer()
     serialize_user = user_serializer.dump(users, many=True)
-    print(list(user_serializer.fields.keys()))
-    print([list(user.values()) for user in serialize_user])
+    #print(list(user_serializer.fields.keys()))
+    #print([list(user.values()) for user in serialize_user])
     excel_buffer = convert_to_excel_buffer(
         colums_name=list(user_serializer.fields.keys()), 
         data=[list(user.values()) for user in serialize_user]
@@ -66,34 +67,22 @@ async def admin_panel(message : Message):
 @admin_router.callback_query(F.data.startswith('accept_'))
 async def application_accept_handler(callback : CallbackQuery, application_id : Optional[int] = None):
     """Принимаем заявку от пользователя"""
-    application_id = int(callback.data.split("_")[1])
-    application : Applications = await  Applications.objects.get(application_id)
-    if not application or application.status != 'active':
-        await callback.message.delete()
-        return await callback.message.answer("Заявка не найдена или не активна")
-    user = await Users.objects.exists(telegram_id =  application.telegram_id)
-    if user:
-        await callback.answer("Пользователь уже заригестрирован видимо заявка устарела")
-        return
-    await Users.objects.create(
-                            full_name=application.full_name, 
-                            phone_number=application.phone_number, 
-                            telegram_id=application.telegram_id, 
-                            telegram_user_name=application.telegram_user_name
-                            )
-    await callback.message.delete()
-    await application.accept()
-    await callback.bot.send_message(application.telegram_id, "✅ Ваша заявка на вступление принята")
-
+    print("Принимаем заявку от пользователя")
+    try:
+        print(callback.data.split("_"))
+        application_id = int(callback.data.split("_")[1])
+        print("ID", application_id)
+        application_service = await get_application_service()
+        telegram_id = await application_service.accept_application(application_id)
+    except Exception as e:
+        print("Ошибка в приеме заявки", e)
 
 @admin_router.callback_query(F.data.startswith('reject_'))
 async def application_reject_handler(callback : CallbackQuery, application_id : Optional[int] = None):
     """Откланяем заявку пользователя"""
-    application_id = int(callback.data.split("_")[1])
-    application  : Applications = await Applications.objects.get(application_id)
-    if not application or application.status != 'active':
-        await callback.message.delete()
-        return await callback.message.answer("Заявка не найдена или не активна")
-    await callback.message.delete()
-    await application.reject()
-    await callback.bot.send_message(application.telegram_id, "❌ К сожалению ваша заявка отклонена")
+    try:
+        application_id = int(callback.data.split("_")[1])
+        application_service = await get_application_service()
+        telegram_id = await application_service.reject_application(application_id)
+    except Exception as e:
+         print("Ошибка в приеме заявки", e)

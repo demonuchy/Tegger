@@ -94,3 +94,28 @@ async def send_application_notifications(id, full_name, phone_number, telegram_u
 
 async def send_message(chat_id, text):
     await bot.send_message(chat_id, text)
+
+
+async def send_notification(
+                        chat_id, 
+                        text, 
+                        keyboard = None
+                    ):
+    await bot.send_message(chat_id, text, reply_markup=keyboard)
+
+
+async def send_new_application_notification(chat_id, text, application_id):
+    """Отпрвляем уведомление админу о новой заявке"""
+    inline_keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="✅ Принять", callback_data=f"accept_{application_id}"),
+                    InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject_{application_id}")
+                ]
+            ]
+        )                   
+    await bot.send_message(
+        chat_id, 
+        text,
+        reply_markup=inline_keyboard
+    )

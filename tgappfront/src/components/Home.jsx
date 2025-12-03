@@ -74,7 +74,8 @@ const Home = () => {
     }
   
     if (isHorizontalSwipeRef.current) {
-      e.preventDefault();
+
+      try{e.preventDefault();} catch(err){}
       lastDiffXRef.current = diffX; // сохраняем текущее смещение
     }
   };

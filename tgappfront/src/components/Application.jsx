@@ -17,7 +17,7 @@ const Application = () => {
     phone: ''
   });
 
-  const { aplicationRequest } = useApi()
+  const { aplicationRequestV2, aplicationRequest } = useApi()
   const formDataRef = useRef(formData);
   const errorRef = useRef(errors)
   const [submitStatus, setSubmitStatus] = useState('idle');
@@ -130,12 +130,17 @@ const Application = () => {
       full_name: currentFormData.fullName.trim(),
       telegram_id: telegramUser?.id?.toString() || 'unknown',
       telegram_user_name: telegramUser?.username || 'unknown',
-      phone_number: cleanedPhone
+      phone_number: cleanedPhone,
     };
     console.log('Отправка данных:', applicationData);
   
     setSubmitStatus('loading');
-    const success = await aplicationRequest(currentFormData.fullName.trim(), telegramUser?.id?.toString() || 'unknown', telegramUser?.username || 'unknown', cleanedPhone)
+    const success = await aplicationRequestV2(
+      currentFormData.fullName.trim(), 
+      telegramUser?.id?.toString() || 'unknown', 
+      telegramUser?.username || 'unknown', 
+      cleanedPhone,
+      )
     if (success) {
       setSubmitStatus('success');
       setTimeout(() => {
@@ -147,7 +152,7 @@ const Application = () => {
       setSubmitStatus('error');
       cleanForm()
     }
-  }, [telegramUser, aplicationRequest, validatePhone, validateFullName, cleanForm, showErrorAnimation, refetchUser, mainButton]);
+  }, [telegramUser, aplicationRequestV2, validatePhone, validateFullName, cleanForm, showErrorAnimation, refetchUser, mainButton]);
 
   useEffect(() => {
     setupMainButton("Отправить заявку", handlerSubmitMainButton, {color: "#e68a00", textColor: "#ffffff"});

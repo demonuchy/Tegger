@@ -7,7 +7,7 @@ import useApi from '../hooks/useAPI';
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const { user: telegramUser } = useTelegram();
+  const { user: telegramUser, isDevelopmentMode} = useTelegram();
   const { getMeRequest } = useApi();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +24,7 @@ export const UserProvider = ({ children }) => {
       setIsLoading(true);
       setError(null);
       
-      if (!telegramUser?.id) {
+      if (!telegramUser?.id || isDevelopmentMode) {
         throw new Error('Telegram user data not available');
       }
 

@@ -1,12 +1,13 @@
 import React from 'react';
-import './SubmitStatus.css';
+import './Error.css'
 
 const Error = () => {
   return (
         <div className="error-wrapper">
-              <img src="emoji.png"/>  
-              <p>Упс..</p> 
-              <p>Произошла ошибка</p> 
+            <div className='error'>
+                  <div className='item' id={1}></div>
+                  <div className='item' id={2}></div>
+            </div>
         </div> 
   );
 };

@@ -3,15 +3,17 @@ import sys
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
+from sqlalchemy.ext.asyncio import AsyncSession
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from application.schem import AplicationRequest, ExtendedApplicationRequest
-from services.bot.bot_aiogram import send_application_notifications, send_message
+from application.schem import AplicationRequest, ExtendedApplicationRequest, ApplicationRequestV2
+from services.bot.bot_aiogram import send_application_notifications, send_message, send_notification, send_new_application_notification
 from app.services.database.models.applications import Applications, Users
+from app.services.database.context import get_session
 from app.services.application.serializer import ApplicationModelSerializetr
-from app.services.depends import handle_errors
-from app.services.depends import get_application_service
+from app.services.depends import handle_errors_wrraper
+from app.services.application.deps import get_application_service
 from app.services.application.service import ApplicationService
 
 application_router = APIRouter(prefix="/application")
@@ -88,49 +90,50 @@ async def change_status_application(application_id : int, status : str):
 
 
 
-public_application_router_v2 = APIRouter(prefix="/application/v2")
 
 
+
+
+
+
+public_application_router_v2 = APIRouter(prefix="/application")
+
+@handle_errors_wrraper()
 @public_application_router_v2.post('')
-async def submit_an_application(data : ExtendedApplicationRequest, background : BackgroundTasks, service : ApplicationService = Depends(get_application_service)):
-    try:
-        await service.submit_an_application(data)
-        return JSONResponse({"details" : "ok"}, status_code=200, background=background)
-    except HTTPException as e:
-        return JSONResponse({"details" : e.detail}, status_code=e.status_code) 
+async def submit_an_application(
+                data : ApplicationRequestV2, 
+                background : BackgroundTasks, 
+                service : ApplicationService = Depends(get_application_service), 
+                ):
+    application = await service.submit_an_application(data)
+    print(application.id)
+    background.add_task(
+        send_new_application_notification, 
+        chat_id = 7052499758, 
+        text =  f"Новая заявка\nФИО : {application.full_name}\nНомер телефона : {application.phone_number}\nTelegram : @{application.telegram_user_name}", 
+        application_id = int(application.id)
+        )
+    return JSONResponse({"details" : "ok"}, status_code=200, background=background)
+   
 
+admin_application_router_v2 = APIRouter(prefix="/application")
 
-
-
-
-admin_application_router_v2 = APIRouter(prefix="/application/v2")
-
-
+@handle_errors_wrraper()
 @admin_application_router_v2.patch('/{application_id}/accept')
-async def accept_application(application_id : int, background : BackgroundTasks, service : ApplicationService = Depends(get_application_service)):
-    try:
-        await service.accept_application(application_id)
-        return JSONResponse({"details" : "ok"}, status_code=200)
-    except HTTPException as e:
-        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
+async def accept_application(application_id : int, service : ApplicationService = Depends(get_application_service)):
+    await service.accept_application(application_id)
+    return JSONResponse({"details" : "ok"}, status_code=200)
 
-
+@handle_errors_wrraper()    
 @admin_application_router_v2.patch('/{application_id}/reject')
-async def reject_application(application_id : int, background : BackgroundTasks, service : ApplicationService = Depends(get_application_service)):
-    try:
-        await service.reject_application(application_id)
-        return JSONResponse({"details" : "ok"}, status_code=200)
-    except HTTPException as e:
-        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
+async def reject_application(application_id : int, service : ApplicationService = Depends(get_application_service)):
+    await service.reject_application(application_id)
+    return JSONResponse({"details" : "ok"}, status_code=200)
 
-
+@handle_errors_wrraper()    
 @admin_application_router_v2.get('')
 async def get_applications_by_status(status : str, service : ApplicationService = Depends(get_application_service)):
-    try:
-        applications = await service.get_applications_by_status(status)
-        return JSONResponse({"details" : "ok", "applications" : applications}, status_code=200)
-    except HTTPException as e:
-        return JSONResponse({"details" : e.detail}, status_code=e.status_code)
-
-
+    applications = await service.get_applications_by_status(status)
+    return JSONResponse({"details" : "ok", "applications" : applications}, status_code=200)
+   
     

@@ -18,10 +18,11 @@ from services.database.middleware import db_session_middleware, DBSessionMiddlew
 from services.database.config import create_all_tables, drop_all_tables
 from services.database.models.base import Base
 
-from services.auth.views import  puplic_router, private_router, admin_router
+from services.auth.views import  puplic_router, private_router, admin_router, private_router_v2, puplic_router_v2, admin_router_v2
 from services.database.config import engine
 from services.admin_panel.setup import AdminSetup
 from services.admin_panel.middleware import AdminAuthMiddleware, admin_auth_middleware
+
 from cors.middlevare import MiddlewareRouter
 from cors.settings import settings
 
@@ -83,6 +84,11 @@ app.add_middleware(
 app.include_router(puplic_router)
 app.include_router(private_router)
 app.include_router(admin_router)
+#app.include_router(ws_router)
+
+app.include_router(puplic_router_v2)
+app.include_router(private_router_v2)
+app.include_router(admin_router_v2)
 
 admin = AdminSetup(app, engine)
 

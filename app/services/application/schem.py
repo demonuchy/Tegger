@@ -7,6 +7,11 @@ class AplicationRequest(BaseModel):
     telegram_id : str
     telegram_user_name : str
     phone_number : str
+
+
+class ApplicationRequestV2(AplicationRequest):
+    vk_username : str
+    creative_skills : str
     
 
 class ExtendedApplicationRequest(BaseModel):

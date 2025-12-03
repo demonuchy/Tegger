@@ -1,0 +1,38 @@
+
+.error{
+    display: flex;
+    position: relative;
+    background-color: var(--primary);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient( var(--primary), var(--primary-dark) 70%, #2f1a00 20%);
+}
+
+.item {
+    position: absolute;
+    top: 46%;
+    left: 15%;
+    width: calc(100% - 30px);
+    height: 8px;
+    border-radius: 4px;
+    background-color: rgb(0, 0, 0);
+    animation: appear 1s ease forwards;
+    
+  }
+  
+  @keyframes appear {
+    to {
+      transform: rotate(var(--target-rotation, 0deg));
+    }
+  }
+  
+  .item[id="1"] {
+    --target-rotation: 42deg;
+  }
+  
+  .item[id="2"] {
+    --target-rotation: -42deg;
+  }

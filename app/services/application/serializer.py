@@ -15,6 +15,14 @@ class ApplicationModelSerializetr(SQLAlchemyAutoSchema):
         load_instance = True
 
 
+class ApplicationToUserSerializer(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ApplicationsLatest
+        load_instance = True
+        exclude = ('id', 'status', 'created_at',)
+
+
+
 class ExtendApplicationModelSerializetr(SQLAlchemyAutoSchema):
     class Meta:
         model = ApplicationsLatest
