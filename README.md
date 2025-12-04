@@ -50,7 +50,7 @@
 ### 📱 Frontend
 
 <div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="30" height="30"/>
 </div>
 
 <div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
