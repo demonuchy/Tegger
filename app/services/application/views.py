@@ -1,6 +1,6 @@
 import os
 import sys
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +15,9 @@ from app.services.application.serializer import ApplicationModelSerializetr
 from app.services.depends import handle_errors_wrraper
 from app.services.application.deps import get_application_service
 from app.services.application.service import ApplicationService
+from app.cors.logger.logger import get_logger
+
+logger = get_logger(__name__)
 
 application_router = APIRouter(prefix="/application")
 
@@ -113,6 +116,7 @@ async def submit_an_application(
         text =  f"Новая заявка\nФИО : {application.full_name}\nНомер телефона : {application.phone_number}\nTelegram : @{application.telegram_user_name}", 
         application_id = int(application.id)
         )
+    logger.info(f"Подача заявки {application.telegram_user_name}")
     return JSONResponse({"details" : "ok"}, status_code=200, background=background)
    
 
@@ -120,14 +124,16 @@ admin_application_router_v2 = APIRouter(prefix="/application")
 
 @handle_errors_wrraper()
 @admin_application_router_v2.patch('/{application_id}/accept')
-async def accept_application(application_id : int, service : ApplicationService = Depends(get_application_service)):
-    await service.accept_application(application_id)
+async def accept_application(request : Request, application_id : int, service : ApplicationService = Depends(get_application_service)):
+    application = await service.accept_application(application_id)
+    logger.info(f"Прием заявки user : {request.state.user.telegram_user_name} - application :{application.telegram_user_name}")
     return JSONResponse({"details" : "ok"}, status_code=200)
 
 @handle_errors_wrraper()    
 @admin_application_router_v2.patch('/{application_id}/reject')
-async def reject_application(application_id : int, service : ApplicationService = Depends(get_application_service)):
-    await service.reject_application(application_id)
+async def reject_application(request : Request, application_id : int, service : ApplicationService = Depends(get_application_service)):
+    application = await service.reject_application(application_id)
+    logger.info(f"Отклонение заявки user : {request.state.user.telegram_user_name} - application :{application.telegram_user_name}")
     return JSONResponse({"details" : "ok"}, status_code=200)
 
 @handle_errors_wrraper()    
@@ -135,5 +141,3 @@ async def reject_application(application_id : int, service : ApplicationService 
 async def get_applications_by_status(status : str, service : ApplicationService = Depends(get_application_service)):
     applications = await service.get_applications_by_status(status)
     return JSONResponse({"details" : "ok", "applications" : applications}, status_code=200)
-   
-    

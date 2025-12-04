@@ -4,6 +4,7 @@ import asyncio
 import json
 import uvicorn  
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
@@ -97,12 +98,13 @@ admin = AdminSetup(app, engine)
 async def bot_webhook(request : Request, update: dict):
     """Обработка всех событий бота"""
     try:
-        print(request.headers)
+        print("ОБрабатываю запрос бот...")
         telegram_update = Update(**update)
         await dp.feed_webhook_update(bot, telegram_update)
         return {"status": "ok"}
     except Exception as e:
-        return {"status": "error"}
+        return JSONResponse({"details" : str(e)})
+    
     
 
 if __name__ == "__main__":

@@ -42,8 +42,6 @@ async def admin_panel(message: Message):
     users = await Users.objects.filter()
     user_serializer = UserModelSerializer()
     serialize_user = user_serializer.dump(users, many=True)
-    #print(list(user_serializer.fields.keys()))
-    #print([list(user.values()) for user in serialize_user])
     excel_buffer = convert_to_excel_buffer(
         colums_name=list(user_serializer.fields.keys()), 
         data=[list(user.values()) for user in serialize_user]

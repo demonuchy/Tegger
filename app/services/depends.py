@@ -3,8 +3,12 @@ import sys
 from functools import wraps
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
+from app.cors.logger.logger import get_logger
+
+logger = get_logger(__name__)
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 
 def handle_errors_wrraper():
@@ -15,6 +19,7 @@ def handle_errors_wrraper():
             try:
                 return await func(*args, **kwargs)
             except HTTPException as e:
+                logger.warn(f"Ошибка : {e}")
                 return JSONResponse({"details" : e.detail}, status_code=e.status_code)
             except Exception as e:
                 raise HTTPException(

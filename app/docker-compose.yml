@@ -1,7 +1,75 @@
 services:
+  postgres:
+    # Image
+    image: postgres:15-alpine
+    container_name : beregdonadp_service
+    restart: unless-stopped 
+    # Environment
+    environment:
+      # User
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: beregdonadb
+    # Volum
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+    # Check ready postges
+    healthcheck:                                
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5 
+    # NEtwork 
+    networks:
+      - app-network 
+  # API
   api:
+    # Build 
+    container_name: beregdonadb_api
     build: 
       context: .
       dockerfile: Dockerfile
+    # Docker environment settings
+    environment:
+      # Database 
+      IN_DOCKER: "true"                    
+      DB_HOST: postgres  
+      DB_USER : ${DB_USER}
+      DB_PASS : ${DB_PASS}
+      DB_NAME : beregdonadb
+      DB_PORT : 5432
+      # Telegram Develeopment account 
+      API_ID : ${API_ID}
+      API_HASH : ${API_HASH}
+      # Telegram Bot 
+      TOKEN_BOT : ${TOKEN_BOT}
+      WEBHOOK_SECRET_TOKEN  :  ${WEBHOOK_SECRET_TOKEN}
+      WEBHOOK_TUNNEL_URL : https://bdapi.loca.lt
+      WEB_APP_URL : https://bdapp.loca.lt
+      # Admin settings
+      ADMIN_SECRET_TOKEN : ${ADMIN_SECRET_TOKEN}
+      TOKEN_ENCODE_ALGORITHM : HS256
+      EXPAIR_ACCSES_TIME : 30 # minets
+      EXPAIR_REFRESH_TIME : 7 #  days
+      JWT_SECRET_KEY : ${JWT_SECRET_KEY}
+    # Depends 
+    depends_on:
+      postgres:
+        condition: service_healthy  
+    # Loop settings
+    restart: unless-stopped
+    # Networck
+    networks:
+      - app-network 
+    # Port
     ports:
       - "8000:8000"
+  
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
+
+  

@@ -17,38 +17,42 @@
 
 ## 🛠️ Технологический стек
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
 
 ### 🗄️ База данных
 
-<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" width="30" height="30" />
 </div>
 
-<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="30" height="30" />
 </div>
 
 ### 🔧 Backend
-<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="30" height="30" />
 </div>
 
-<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" width="30" height="30" />
 </div>
 
-<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlalchemy/sqlalchemy-original.svg" width="30" height="30" style="margin-left: 10px;" />
 </div>
 
-<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="30" height="30" />
 </div>
 
 
 
 ### 📱 Frontend
-<div style="background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center;">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="30" height="30" />
+
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="40" height="40"/>
+</div>
+
+<div style="background: #4d4d4d; padding: 15px; border-radius: 8px; text-align: center;">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="30" height="30" />
 </div>

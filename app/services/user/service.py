@@ -16,8 +16,7 @@ class UserService:
     def __init__(self, user_model  : UsersLatest):
         self.user_model = user_model
 
-    async def get_me(self, user_id : int, user_serializer = ExtendUserModelSerializer()):
-        user : Optional[UsersLatest] = await self.user_model.objects.get(user_id)
+    async def get_me(self, user, user_serializer = ExtendUserModelSerializer()):
         if not user:
             raise HTTPException(404, "Пользователь ненайден")
         user : dict = user_serializer.dump(user)

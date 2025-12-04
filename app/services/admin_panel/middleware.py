@@ -14,11 +14,13 @@ from app.services.database.models.applications import Applications, Users
 
 from services.database.context import set_session, reset_session
 from services.database.config import async_session
+from app.cors.logger.logger import get_logger
 
+logger = get_logger(__name__)
 
 class AdminAuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        print("🔍 2. AdminAuthMiddleware: проверяю права")
+        logger.info("🔍 2. AdminAuthMiddleware: проверяю права")
         if request.url.path == "/admin":
             user_id = request.query_params.get("user_id")
             if not user_id:

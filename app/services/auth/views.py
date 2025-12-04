@@ -96,19 +96,19 @@ class AuthMiddleware:
         user = await UsersLatest.objects.get_by_field("telegram_id", user_id)
         if not user:
             raise HTTPException(detail="Вы не зарегестрированны", status_code=401)
-        request.state.user_id = int(user.id)
-        return user
-
+        request.state.user_id = user
+        return request 
 
 class AdminPermissionMiddleware:
-    async def __call__(self, request : Request, user : Users = Depends(AuthMiddleware())):
+    async def __call__(self, request : Request, user  = Depends(AuthMiddleware())):
         """Проверяем права доступа"""
-        print("3 Поверка прав пользователя", request, user)
+        print("3 Поверка прав пользователя")
         if DEV:
             return request
+        user = request.state.user 
         if not user.is_admin:
             raise HTTPException(detail="Недостаточно прав", status_code=403)
-        return user
+        return request
 
 # Router V1
 puplic_router = APIRouter(prefix="/api", tags=["puplic"], dependencies=[Depends(CheckTelegramMiddleware())])

@@ -12,7 +12,7 @@ const useApi = () => {
 
     const aplicationRequestV2 = useCallback(async (fullName, telegramId, telegramUserName, phoneNumber, vk_username, creative_skills) => {
       try {
-        const response = await fetch(`${domain}/api/application/v2`, {
+        const response = await fetch(`${domain}/api/v2/application`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const useApi = () => {
 
     const getMeRequestV2 = useCallback(async (telegramId) => {
       try {
-        const url = new URL(`${domain}/api/users/v2/me`);
+        const url = new URL(`${domain}/api/v2/users/me`);
         const response = await fetch(url.toString(), {
           method: 'GET',
           headers: {
@@ -164,7 +164,7 @@ const useApi = () => {
     const updateApplicationStatusV2 = useCallback(async (applicationId, status) => {
       try {
         // Создаем URL с query параметром status
-        const url = new URL(`${domain}/api/admin/application/${applicationId}/${status}`);
+        const url = new URL(`${domain}/api/v2/admin/application/${applicationId}/${status}`);
         const response = await fetch(url.toString(), {
           method: 'PATCH',
           headers: {
