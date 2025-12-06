@@ -10,7 +10,6 @@ logger = get_logger(__name__)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-
 def handle_errors_wrraper():
     """Обработка ошибок в ендпоинтах"""
     def decorator(func):

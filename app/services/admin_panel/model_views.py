@@ -13,6 +13,7 @@ class AdminManage:
 
 
 class UserAdmin(ModelView, model=AdminManage.USER):
+    """User view админ панель"""
     name = "Пользователь"
     name_plural = "Пользователи"
     column_list = [
@@ -35,6 +36,7 @@ class UserAdmin(ModelView, model=AdminManage.USER):
         
 
 class ApplicationAdmin(ModelView, model=AdminManage.APPLICATION):
+    """Application view админ панель"""
     name = "Заявка"
     name_plural = "Заявки"
     column_list = [

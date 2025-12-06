@@ -12,8 +12,9 @@ from app.cors.settings import settings
 
 
 class AdminSetup:
+    """Класс управления админ панелью и представлениями"""
     def __init__(self, app, engine):
-        self.admin = Admin(app, engine, title="BeregDona Admin", base_url="/admin", authentication_backend=MyAuthBackend(secret_key=settings.ADMIN_SECRET_TOKEN))
+        self.admin = Admin(app, engine, title="BeregDona Admin", base_url="/api/v2/admin", authentication_backend=MyAuthBackend(secret_key=settings.ADMIN_SECRET_TOKEN))
         self._custom_views: List[Type[ModelView]] = [ApplicationAdmin, UserAdmin]
         self._setup_views()
 

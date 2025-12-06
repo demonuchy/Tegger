@@ -10,10 +10,12 @@ class AplicationRequest(BaseModel):
 
 
 class ApplicationRequestV2(AplicationRequest):
+    """Рассширеная модель"""
     vk_username : str
     creative_skills : str
     
-
+    
+# Устарела
 class ExtendedApplicationRequest(BaseModel):
     """Модель запроса для подачи заявки V2"""
     # паспортные данные

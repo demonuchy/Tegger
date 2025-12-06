@@ -16,7 +16,7 @@ from aiogram.types import Update
 from services.bot.bot_aiogram import bot, dp, set_webhook, delete_webhook, WEBHOOK_PATH
 
 from services.database.middleware import db_session_middleware, DBSessionMiddleware
-from services.database.config import create_all_tables, drop_all_tables
+
 from services.database.models.base import Base
 
 from services.auth.views import  puplic_router, private_router, admin_router, private_router_v2, puplic_router_v2, admin_router_v2
@@ -24,32 +24,32 @@ from services.database.config import engine
 from services.admin_panel.setup import AdminSetup
 from services.admin_panel.middleware import AdminAuthMiddleware, admin_auth_middleware
 
-from cors.middlevare import MiddlewareRouter
-from cors.settings import settings
+from app.cors.middlevare import MiddlewareRouter
+from app.cors.settings import settings
+from app.cors.logger.logger import get_logger
 
+logger = get_logger(__name__)
 
 async def start_app():
     """Запуск приложения"""
     try:
-        print("start server")
-        status = await create_all_tables()
-        print(f"Create tables: {status}")
+        logger.info("start server")
         await set_webhook()
-        print("successful start")
+        logger.info("successful start")
     except Exception as e:
-        print(f"Error starting app: {e}")
+        logger.warn(f"Error starting app: {e}")
 
 
 async def stop_app():
     """Остановка приложения"""
     try: 
-        print("stop server")
+        logger.info("stop server")
         await delete_webhook()
         await bot.session.close()
     except Exception as e:
-        print(f"Error while closing client stream: {e}")
+        logger.warn(f"Error while closing client stream: {e}")
     finally:
-        print("successful stop")
+        logger.info("successful stop")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -98,7 +98,7 @@ admin = AdminSetup(app, engine)
 async def bot_webhook(request : Request, update: dict):
     """Обработка всех событий бота"""
     try:
-        print("ОБрабатываю запрос бот...")
+        logger.info("ОБрабатываю запрос бот...")
         telegram_update = Update(**update)
         await dp.feed_webhook_update(bot, telegram_update)
         return {"status": "ok"}

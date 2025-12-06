@@ -14,7 +14,10 @@ from app.services.application.views import application_router, admin_application
 from app.cors.settings import settings
 from app.services.database.models.applications import Users
 from app.services.database.models.user import UsersLatest
+from app.cors.logger.logger import get_logger
 
+
+logger = get_logger(__name__)
 
 DEV = False
 
@@ -77,11 +80,12 @@ def get_user_id_from_init_data(init_data: str, bot_token: str) -> Optional[int]:
 class CheckTelegramMiddleware:
     async def __call__(self, request : Request):
         """Проверяем отправлен ли запрос с телеграм web app"""
-        print("1 Проверяю пришел ли запрос с телеграм Web App")
+        logger.info("Проверяю пришел ли запрос с телеграм Web App")
         if DEV:
             return request
         init_data : str | None = request.headers.get("X-Telegram-Init-Data")
         if not init_data:
+            logger.warn(f"Запрос не с телеграма | на {request.base_url.path} c {request.client.host}")
             raise HTTPException(detail="init data не передан", status_code=401)
         user_id = get_user_id_from_init_data(init_data, settings.TOKEN_BOT)
         return str(user_id)
@@ -90,11 +94,12 @@ class CheckTelegramMiddleware:
 class AuthMiddleware:
     async def __call__(self, request : Request, user_id : str = Depends(CheckTelegramMiddleware())):
         """проверяем пользователя"""
-        print("2 Аунтификация пользователя", request)
+        logger.info("Аунтификация пользователя")
         if DEV:
             return request
         user = await UsersLatest.objects.get_by_field("telegram_id", user_id)
         if not user:
+            logger.warn(f"Не зарегестрированный пользователь | на {request.base_url.path} c {request.client.host}")
             raise HTTPException(detail="Вы не зарегестрированны", status_code=401)
         request.state.user_id = user
         return request 
@@ -102,11 +107,12 @@ class AuthMiddleware:
 class AdminPermissionMiddleware:
     async def __call__(self, request : Request, user  = Depends(AuthMiddleware())):
         """Проверяем права доступа"""
-        print("3 Поверка прав пользователя")
+        logger.info("Поверка прав пользователя")
         if DEV:
             return request
         user = request.state.user 
         if not user.is_admin:
+            logger.warn(f"Нет прав администратора | на {request.base_url.path} c {request.client.host}")
             raise HTTPException(detail="Недостаточно прав", status_code=403)
         return request
 

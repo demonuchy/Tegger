@@ -1,0 +1,110 @@
+2025-12-05 21:34:16 - app.__main__ - INFO - Cоздаем таблицы...
+2025-12-05 21:34:16 - app.config - INFO - до очищения кеша 0
+2025-12-05 21:34:16 - app.config - INFO - после очищения 0
+2025-12-05 21:34:17 - app.config - INFO - Таблицы созданы
+2025-12-05 21:34:40 - app.main - INFO - start server
+2025-12-05 21:34:42 - app.main - WARNING - Error starting app: Telegram server says - Bad Request: secret token contains unallowed characters
+2025-12-05 21:35:08 - app.main - INFO - stop server
+2025-12-05 21:35:36 - app.__main__ - INFO - Cоздаем таблицы...
+2025-12-05 21:35:36 - app.config - INFO - до очищения кеша 0
+2025-12-05 21:35:36 - app.config - INFO - после очищения 0
+2025-12-05 21:35:36 - app.config - INFO - после импорта 5
+2025-12-05 21:35:36 - app.config - INFO - Таблицы созданы
+2025-12-05 21:35:51 - app.main - INFO - start server
+2025-12-05 21:36:02 - app.main - WARNING - Error starting app: Telegram server says - Bad Request: secret token contains unallowed characters
+2025-12-05 21:36:23 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:36:23 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:36:24 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:36:24 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:37:10 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:37:10 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:06 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:06 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:06 - app.views - INFO - Проверяю авторизацию
+2025-12-05 21:40:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:06 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:07 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:07 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:07 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:07 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:07 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:07 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:07 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:08 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:08 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:08 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:08 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:09 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:09 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:09 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 21:40:16 - app.middleware - INFO - 🔍 1. DBSessionMiddleware: устанавливаю сессию
+2025-12-05 21:40:16 - app.views - INFO - Попытка входа 172.18.0.1 - root - root
+2025-12-05 21:40:16 - app.views - WARNING - Неверные учетные данные
+2025-12-05 21:40:16 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:00:21 - app.__main__ - INFO - Cоздаем таблицы...
+2025-12-05 23:00:21 - app.config - INFO - до очищения кеша 0
+2025-12-05 23:00:21 - app.config - INFO - после очищения 0
+2025-12-05 23:00:21 - app.config - INFO - после импорта 5
+2025-12-05 23:00:21 - app.config - INFO - Таблицы созданы
+2025-12-05 23:00:32 - app.main - INFO - start server
+2025-12-05 23:00:34 - app.main - WARNING - Error starting app: Telegram server says - Bad Request: secret token contains unallowed characters
+2025-12-05 23:01:04 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:04 - app.views - INFO - Попытка входа 172.18.0.1 - root - root
+2025-12-05 23:01:05 - app.views - WARNING - Неверные учетные данные
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:06 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:06 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:06 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:06 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:06 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:01:43 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-05 23:01:43 - app.views - INFO - Попытка входа 172.18.0.1 - admin - hashed_password_here
+2025-12-05 23:01:43 - app.views - WARNING - Неверные учетные данные
+2025-12-05 23:01:43 - app.middleware - INFO - Запрос обработан успешно
+2025-12-05 23:02:43 - app.main - INFO - stop server
+2025-12-05 23:02:43 - app.main - INFO - successful stop
+2025-12-05 23:07:41 - app.__main__ - INFO - Cоздаем таблицы...
+2025-12-05 23:07:41 - app.config - INFO - до очищения кеша 0
+2025-12-05 23:07:41 - app.config - INFO - после очищения 0
+2025-12-05 23:07:41 - app.config - INFO - после импорта 5
+2025-12-05 23:07:41 - app.config - INFO - Таблицы созданы
+2025-12-05 23:07:51 - app.main - INFO - start server
+2025-12-05 23:07:52 - app.main - WARNING - Error starting app: Telegram server says - Bad Request: secret token contains unallowed characters
+2025-12-05 23:18:33 - app.main - INFO - stop server

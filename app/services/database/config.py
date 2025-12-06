@@ -18,14 +18,14 @@ async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 async def create_all_tables():
     """Создание всех таблиц из моделей"""
-    logger.info('до очищения кеша', len(Base.metadata.tables))
+    logger.info(f'до очищения кеша {len(Base.metadata.tables)}')
     Base.metadata.clear()
-    logger.info('после очищения', len(Base.metadata.tables))
+    logger.info(f'после очищения {len(Base.metadata.tables)}')
     try:
         from database.models.applications import Applications, Users, ApplicationsLatest
         from database.models.user import UsersLatest
         from database.models.admin import Admins
-        logger.info('после импорта', len(Base.metadata.tables))
+        logger.info(f'после импорта {len(Base.metadata.tables)}')
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
         logger.info("Таблицы созданы")

@@ -98,7 +98,6 @@ async def change_status_application(application_id : int, status : str):
 
 
 
-
 public_application_router_v2 = APIRouter(prefix="/application")
 
 @handle_errors_wrraper()
@@ -108,6 +107,7 @@ async def submit_an_application(
                 background : BackgroundTasks, 
                 service : ApplicationService = Depends(get_application_service), 
                 ):
+    """Подача заявки"""
     application = await service.submit_an_application(data)
     print(application.id)
     background.add_task(
@@ -120,24 +120,41 @@ async def submit_an_application(
     return JSONResponse({"details" : "ok"}, status_code=200, background=background)
    
 
+   
+
 admin_application_router_v2 = APIRouter(prefix="/application")
 
 @handle_errors_wrraper()
 @admin_application_router_v2.patch('/{application_id}/accept')
-async def accept_application(request : Request, application_id : int, service : ApplicationService = Depends(get_application_service)):
+async def accept_application(
+                request : Request, 
+                application_id : int,
+                background : BackgroundTasks,  
+                service : ApplicationService = Depends(get_application_service)):
+    """Принимаем заявку"""
     application = await service.accept_application(application_id)
+    background.add_task(send_notification, application.telegram_id, "Ваша заявка принята")
     logger.info(f"Прием заявки user : {request.state.user.telegram_user_name} - application :{application.telegram_user_name}")
-    return JSONResponse({"details" : "ok"}, status_code=200)
+    return JSONResponse({"details" : "ok"}, status_code=200, background=background)
 
 @handle_errors_wrraper()    
 @admin_application_router_v2.patch('/{application_id}/reject')
-async def reject_application(request : Request, application_id : int, service : ApplicationService = Depends(get_application_service)):
+async def reject_application(
+                request : Request, 
+                application_id : int, 
+                background : BackgroundTasks, 
+                service : ApplicationService = Depends(get_application_service)):
+    """Отклоням заявку"""
     application = await service.reject_application(application_id)
+    background.add_task(send_notification, application.telegram_id, "Ваша заявка отклонена")
     logger.info(f"Отклонение заявки user : {request.state.user.telegram_user_name} - application :{application.telegram_user_name}")
     return JSONResponse({"details" : "ok"}, status_code=200)
 
 @handle_errors_wrraper()    
 @admin_application_router_v2.get('')
-async def get_applications_by_status(status : str, service : ApplicationService = Depends(get_application_service)):
+async def get_applications_by_status(
+    status : str, 
+    service : ApplicationService = Depends(get_application_service)):
+    """Получаем заявки по статусу"""
     applications = await service.get_applications_by_status(status)
     return JSONResponse({"details" : "ok", "applications" : applications}, status_code=200)

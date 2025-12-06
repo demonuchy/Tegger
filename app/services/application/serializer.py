@@ -9,13 +9,17 @@ from app.services.database.models.applications import Applications, Applications
 
 
 class ApplicationModelSerializetr(SQLAlchemyAutoSchema):
-    """Сереалайзер в pydantic модель для модели заявки """
+    """Сереалайзер для модели заявки """
     class Meta:
         model = Applications
         load_instance = True
 
 
 class ApplicationToUserSerializer(SQLAlchemyAutoSchema):
+    """
+    Сереалайзер для создания пользователя 
+    Нужен для соовместимости с новыми моделями 
+    """
     class Meta:
         model = ApplicationsLatest
         load_instance = True
@@ -24,6 +28,7 @@ class ApplicationToUserSerializer(SQLAlchemyAutoSchema):
 
 
 class ExtendApplicationModelSerializetr(SQLAlchemyAutoSchema):
+    """Сереалайзер для модели заявки расширенный v2 """
     class Meta:
         model = ApplicationsLatest
         load_instance = True

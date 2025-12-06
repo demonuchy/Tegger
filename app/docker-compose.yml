@@ -2,7 +2,8 @@ services:
   postgres:
     # Image
     image: postgres:15-alpine
-    container_name : beregdonadp_service
+    container_name : beregdona_database_container
+    hostname: postgres
     restart: unless-stopped 
     # Environment
     environment:
@@ -13,27 +14,32 @@ services:
     # Volum
     volumes:
       - postgres_data:/var/lib/postgresql/data 
-    # Check ready postges
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    # Check ready postgres
     healthcheck:                                
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d beregdonadb"]
       interval: 10s
       timeout: 5s
       retries: 5 
+      start_period: 20s
     # NEtwork 
     networks:
       - app-network 
   # API
   api:
     # Build 
-    container_name: beregdonadb_api
+    container_name: beregdona_api_container
     build: 
       context: .
       dockerfile: Dockerfile
     # Docker environment settings
+    volumes:
+      - ./:/app
     environment:
       # Database 
       IN_DOCKER: "true"                    
-      DB_HOST: postgres  
+      DB_HOST: postgres
+      
       DB_USER : ${DB_USER}
       DB_PASS : ${DB_PASS}
       DB_NAME : beregdonadb

@@ -32,7 +32,7 @@ async def db_session_middleware(request: Request, call_next):
 
 class DBSessionMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        logger.info("🔍 1. DBSessionMiddleware: устанавливаю сессию")
+        logger.info("DBSessionMiddleware: устанавливаю сессию")
         async with async_session() as session:
             token = set_session(session)
             try:
