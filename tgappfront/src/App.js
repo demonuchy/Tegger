@@ -10,12 +10,17 @@ import Home from './components/Home';
 import './App.css';
 
 
+const DEV = true;
+
 // Компонент для проверки готовности приложения
 const AppInitializer = ({ children }) => {
-   const { isLoading, userData, error } = useUser();
-   // const isLoading = false
-   // const error = false
-  if (isLoading) {
+  const { isLoading, userData, error } = useUser();
+  if (DEV){
+    const isLoading = false
+    const error = false
+  }
+   
+  if (true) {
     return (
       <LoadingSpinner 
         fullScreen={true} 
@@ -36,8 +41,32 @@ const AppInitializer = ({ children }) => {
 
 // Компонент для маршрутизации
 const AppRoutes = () => {
- const { userData } = useUser();
- //const userData = {}
+  const { userData } = useUser();
+  if (DEV){
+    const userData = {
+      id: 1,
+      // Паспортные данные
+      full_name: "Бесс Дима Кишка",
+      passport_series : "1111",
+      passport_number : "222222",
+      actual_address : "Мухосранск",
+      address_registered : "Мухосранск",
+      // доп данные
+      educational_group : "ЖР342",
+      educational_faculty : "Факультет",
+      creative_skills : "Круто сру на подоконник",
+      phone_number: "79999999999",
+      //  Telegram данные
+      telegram_id: "1111111111",
+      telegram_user_name: "test",
+      // vk
+      vk_username : "testvk",
+      //  meta
+      is_active : true,
+      is_admin : true,
+      status : "Разработчик"
+    };
+  }
 
 
   return (

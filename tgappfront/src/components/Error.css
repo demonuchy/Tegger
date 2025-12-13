@@ -9,6 +9,7 @@
     align-items: center;
     justify-content: center;
     background: radial-gradient( var(--primary), var(--primary-dark) 70%, #2f1a00 20%);
+    box-shadow: 1px 120px 18px rgba(88, 58, 0, 0.7);
 }
 
 .item {
@@ -19,20 +20,170 @@
     height: 8px;
     border-radius: 4px;
     background-color: rgb(0, 0, 0);
-    animation: appear 1s ease forwards;
-    
+    animation: appear 1.2s ease forwards;
+    transform:  translateX(-50px);
   }
   
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .error {
+    display: flex;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    
+    /* Градиент для объема - имитация освещения сверху */
+    background: radial-gradient(
+        circle at 30% 30%,
+        var(--primary-light, #ffcc00) 0%,
+        var(--primary) 20%,
+        var(--primary-dark) 70%,
+        #2f1a00 100%
+    );
+    
+    /* Тень шара */
+    box-shadow: 
+        /* Внутренняя тень для объема */
+        inset 0 -8px 15px rgba(0, 0, 0, 0.3),
+        inset 0 8px 15px rgba(255, 255, 255, 0.2),
+        
+        /* Основная тень шара */
+        0 15px 30px rgba(88, 58, 0, 0.4),
+        0 5px 15px rgba(88, 58, 0, 0.3);
+    
+    /* Блеск для реалистичности */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Добавляем блик на шар */
+  .error::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 20%;
+    height: 20%;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.1) 70%,
+        transparent 100%
+    );
+    pointer-events: none;
+  }
+  
+  /* Небольшое свечение вокруг шара */
+  .error::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 204, 0, 0.1) 0%,
+        transparent 70%
+    );
+    z-index: -1;
+    animation: pulse 3s infinite ease-in-out;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+  }
+  
+  .item {
+    position: absolute;
+    top: 46%;
+    left: 15%;
+    width: calc(100% - 30px);
+    height: 8px;
+    border-radius: 4px;
+    
+    /* Объем для крестика */
+    background: linear-gradient(
+        to bottom,
+        #222 0%,
+        #000 50%,
+        #222 100%
+    );
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    animation: appear 1.2s ease forwards;
+    transform: translateX(-55px);
+  }
+
+
   @keyframes appear {
     to {
       transform: rotate(var(--target-rotation, 0deg));
     }
   }
-  
+
+
   .item[id="1"] {
     --target-rotation: 42deg;
   }
   
   .item[id="2"] {
     --target-rotation: -42deg;
+  }
+
+  
+  /* Альтернативный вариант с более простым градиентом для error */
+  .error {
+    /* ... остальные стили ... */
+    
+    /* Вариант 2: Градиент с более выраженным объемом */
+    background: radial-gradient(
+        circle at 30% 30%,
+        color-mix(in srgb, var(--primary) 100%, white 20%) 0%,
+        var(--primary) 30%,
+        color-mix(in srgb, var(--primary) 100%, black 30%) 70%,
+        color-mix(in srgb, #2f1a00 100%, black 50%) 100%
+    );
+  }
+  
+  /* Для поддержки старых браузеров, если не поддерживается color-mix */
+  @supports not (background: color-mix(in srgb, white, black)) {
+    .error {
+        background: radial-gradient(
+            circle at 30% 30%,
+            rgba(255, 220, 100, 0.9) 0%,
+            var(--primary) 30%,
+            rgba(180, 120, 0, 0.9) 70%,
+            #2f1a00 100%
+        );
+    }
   }

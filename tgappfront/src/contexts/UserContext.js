@@ -26,6 +26,7 @@ export const UserProvider = ({ children }) => {
       
       if (!telegramUser?.id || isDevelopmentMode) {
         throw new Error('Telegram user data not available');
+        //return "okey"
       }
 
       const response = await getMeRequest(telegramUser.id.toString());
