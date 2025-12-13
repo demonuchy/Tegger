@@ -20,7 +20,7 @@ const AppInitializer = ({ children }) => {
     const error = false
   }
    
-  if (true) {
+  if (isLoading) {
     return (
       <LoadingSpinner 
         fullScreen={true} 
