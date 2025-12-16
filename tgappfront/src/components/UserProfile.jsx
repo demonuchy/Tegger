@@ -1,8 +1,8 @@
 // components/UserProfile.js
-import React, { useState, useEffect, useCallback, useRef, use } from 'react';
+import React, { useState, useEffect, useCallback, useRef, } from 'react';
 import Webcam from 'react-webcam';
 import { useUser } from '../contexts/UserContext';
-import { Tesseract } from 'tesseract.js';
+
 
 const PersonalCabinet = () => {
   const { userData, telegramUser } = useUser();
@@ -15,9 +15,71 @@ const PersonalCabinet = () => {
     shape: null,
     timestamp: null
   });
+  const [isLongPress, setIsLongPress] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false)
+  const touchTimer = useRef(null);
+  const touchStartTime = useRef(0);
+
+  
+
+  const handleTouchStart = (e) => {
+    e.preventDefault(); // Предотвращаем стандартное поведение (зум и т.д.)
+    touchStartTime.current = Date.now();
+    
+    // Запускаем таймер для долгого нажатия (500ms)
+    touchTimer.current = setTimeout(() => {
+      setIsLongPress(true);
+      console.log('Долгое нажатие!');
+      // Выполняем действие для долгого нажатия
+      onLongPressAction();
+    }, 500);
+  };
+
+  const handleTouchEnd = (e) => {
+    e.preventDefault();
+    
+    if (touchTimer.current) {
+      clearTimeout(touchTimer.current);
+    }
+    
+    const pressDuration = Date.now() - touchStartTime.current;
+    
+    // Если было короткое нажатие (< 500ms)
+    if (pressDuration < 500 && !isLongPress) {
+      console.log('Короткое нажатие');
+      // Выполняем действие для короткого нажатия
+      onClickAction();
+    }
+    
+    setIsLongPress(false);
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+    // Если палец сдвинулся, отменяем долгое нажатие
+    if (touchTimer.current) {
+      clearTimeout(touchTimer.current);
+      touchTimer.current = null;
+    }
+  };
+
+  const onLongPressAction = useCallback(() => {
+    if(isEditMode){
+      setIsEditMode(false)
+      return;
+    }
+    setIsEditMode(true)
+  },[isEditMode, setIsEditMode]);
+
+  const onClickAction = () => {
+    console.log('short tach')
+  };
 
 
-  const handleScanClick = useCallback(() => {setIsCameraActive(true)}, [setIsCameraActive])
+  const handleScanClick = useCallback(() => {
+    // setIsCameraActive(true)
+    alert('Функция пока что не доступна')
+  }, [setIsCameraActive])
   const handleCloseCamera = useCallback(()=>{setIsCameraActive(false)}, [setIsCameraActive])
 
   const processImage = () => {
@@ -85,7 +147,7 @@ const PersonalCabinet = () => {
 
   return (
     <div className="profile-wrapper">
-      {/* Камера на весь экран */}
+    {/*  
       {isCameraActive && (
         <div className="camera-fullscreen">
           
@@ -103,10 +165,14 @@ const PersonalCabinet = () => {
           />
           <button onClick={handleCloseCamera} className="close-camera-btn-fullscreen">✗</button>
         </div>
-      )}
-      
-      {/* Основной контент профиля (без изменений) */}
-      <div className="profile-card">
+      ) */}
+    
+      <div 
+        className="profile-card"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        >
         <div className="profile-image">
           <div className="image-placeholder">
             <img src={telegramUser.photo_url} alt="Avatar" />
@@ -124,7 +190,7 @@ const PersonalCabinet = () => {
             </button>
           </div>
           
-          <div className='info-block-wrapper'>
+          <div className={`info-block-wrapper ${isEditMode ? 'edit-mode' : ''}`}>
             <h4>Telegram</h4>
             <div className="info-block">
               <div className="info-row">
@@ -138,7 +204,7 @@ const PersonalCabinet = () => {
             </div>
           </div>
 
-          <div className='info-block-wrapper'>
+          <div className={`info-block-wrapper ${isEditMode ? 'edit-mode' : ''}`}>
             <h4>Основные</h4>
             <div className="info-block">
               <div className="info-row">
@@ -164,7 +230,7 @@ const PersonalCabinet = () => {
             </div>
           </div>
 
-          <div className='info-block-wrapper'>
+          <div className={`info-block-wrapper ${isEditMode ? 'edit-mode' : ''}`}>
             <h4>Личные</h4>
             <div className="info-block">
               <div className="info-row">

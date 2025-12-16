@@ -14,6 +14,29 @@ class UserModelSerializer(SQLAlchemyAutoSchema):
         load_instance = True
 
 
+
+class ManyUserSerializer(SQLAlchemyAutoSchema):
+    class Meta:
+        model = UsersLatest
+        exclude = (
+            'id',
+             'created_at', 
+             'telegram_id', 
+             'telegram_user_name',
+             'is_active',
+             'is_admin',
+             'updated_at', 
+             'full_name',
+             'passport_series',
+             'passport_number',
+             'actual_address',
+             'address_registered',
+             'educational_group',
+             'educational_faculty',
+             'creative_skills', 
+             )
+
+
 class ExtendUserModelSerializer(SQLAlchemyAutoSchema):
      class Meta:
         model = UsersLatest

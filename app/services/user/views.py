@@ -42,7 +42,13 @@ private_user_router_v2 = APIRouter(prefix="/users")
 @handle_errors_wrraper()
 @private_user_router_v2.get("/me")
 async def get_me(request : Request, service : UserService = Depends(get_user_service)):
-    user = request.state.user_id
+    user = request.state.user
     user = await service.get_me(user)
     return JSONResponse({"details" : "ok", "user" : user}, status_code=200)
    
+@handle_errors_wrraper()
+@private_user_router_v2.get("")
+async def get_users(request : Request, service : UserService = Depends(get_user_service)):
+    users = await service.get_users()
+    return JSONResponse({"details" : "ok", "users" : users})
+    

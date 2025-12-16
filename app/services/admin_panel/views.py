@@ -3,10 +3,11 @@ import sys
 import jwt
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
+from sqladmin.authentication import AuthenticationBackend
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.database.models.admin import Admins
-from sqladmin.authentication import AuthenticationBackend
+
 from starlette.requests import Request
 from app.cors.settings import settings
 from app.cors.logger.logger import get_logger

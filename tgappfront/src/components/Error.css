@@ -1,4 +1,4 @@
-  .error {
+  .error-main {
     display: flex;
     position: relative;
     width: 100px;
@@ -31,7 +31,7 @@
     overflow: hidden;
   }
   /* Добавляем блик на шар */
-  .error::before {
+  .error-main::before {
     content: '';
     position: absolute;
     top: 10%;
@@ -49,7 +49,7 @@
   }
   
   /* Небольшое свечение вокруг шара */
-  .error::after {
+  .error-main::after {
     content: '';
     position: absolute;
     top: -5px;
@@ -63,7 +63,7 @@
         transparent 70%
     );
     z-index: -1;
-    animation: pulse 3s infinite ease-in-out;
+    animation: pulse 1s infinite ease-in-out;
   }
   
   @keyframes pulse {
@@ -84,8 +84,6 @@
     width: calc(100% - 30px);
     height: 8px;
     border-radius: 4px;
-    
-    /* Объем для крестика */
     background: linear-gradient(
         to bottom,
         #222 0%,
@@ -95,44 +93,46 @@
     box-shadow: 
         0 2px 4px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    animation: appear 1.2s ease forwards;
-    transform: translateX(-55px);
+    transform: translateX(-75px);
+   
   }
 
 
-  @keyframes appear {
+  @keyframes appear1 {
     to {
-      transform: rotate(var(--target-rotation, 10deg));
+      transform: translateX(0px) rotate(42deg);
     }
   }
 
+  @keyframes appear2 {
+    to {
+      transform: translateX(0px) rotate(-42deg);
+    }
+  }
 
   .item[id="1"] {
-    --target-rotation: 42deg;
-  }
-  
-  .item[id="2"] {
-    --target-rotation: -42deg;
-  }
+    animation: appear1 1.5s ease forwards;
+}
 
+  .item[id="2"] {
+    animation: appear2 1.5s ease forwards;
+}
+
+.shadow {
+  margin-top: 15%;
+  width: 120px;
+  height: 110px;
+  background: radial-gradient(ellipse at center, #ff8c0045 -20%, rgb(60 45 18 / 55%) 40%, #2a282866 70%);
+  border-radius: 50%;
+  filter: blur(25px);
+  transform: skew(168deg, 0deg) rotateX(79deg) translateX(12px);
+}
   
-  /* Альтернативный вариант с более простым градиентом для error */
-  .error {
-    /* ... остальные стили ... */
-    
-    /* Вариант 2: Градиент с более выраженным объемом */
-    background: radial-gradient(
-        circle at 30% 30%,
-        color-mix(in srgb, var(--primary) 100%, white 20%) 0%,
-        var(--primary) 30%,
-        color-mix(in srgb, var(--primary) 100%, black 30%) 70%,
-        color-mix(in srgb, #2f1a00 100%, black 50%) 100%
-    );
-  }
+
   
   /* Для поддержки старых браузеров, если не поддерживается color-mix */
   @supports not (background: color-mix(in srgb, white, black)) {
-    .error {
+    .error-main {
         background: radial-gradient(
             circle at 30% 30%,
             rgba(255, 220, 100, 0.9) 0%,

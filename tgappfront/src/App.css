@@ -594,7 +594,7 @@ body {
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
 }
 
-/* === ГЛАВНЫЙ ЭКРАН И ДОЧЕРНИЕ КОМПОНЕНТЫ === */
+/* === ГЛАВНЫЙ ЭКРАН И ДОЧЕРНИЕ КОМПОНЕНТЫ === info-block-wrapper*/
 
 .main-wrapper {
   background: var(--bg-primary);
@@ -1126,12 +1126,42 @@ body {
 }
 
 .info-block-wrapper{
+  overflow: hidden ;
+  position: relative;
   display: flex;
   flex-direction: column;
 }
 
+
+.info-block-wrapper.edit-mode h4::before{
+  position: absolute;
+  content: "✗";
+  top: 14px;
+  left: -400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-weight: bold;
+  color: var(--bg-primary);
+  background-color: rgb(149, 2, 2);
+  box-shadow: 0 6px 20px var(--shadow);
+  border-radius: 50%;
+ 
+}
+
+.info-block-wrapper.edit-mode h4{
+  transform: translateX(400px); 
+  transition: all 0.3s linear;
+}
+
 .info-block-wrapper h4{
+  display:  flex;
+  width: 100%;
+  justify-content: flex-start;
   padding: 10px;
+  transition: all 0.3s linear;
 }
 
 .info-block {

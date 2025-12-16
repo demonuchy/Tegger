@@ -8,7 +8,7 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const { user: telegramUser, isDevelopmentMode} = useTelegram();
-  const { getMeRequest } = useApi();
+  const { getMeRequestV2} = useApi();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ export const UserProvider = ({ children }) => {
         //return "okey"
       }
 
-      const response = await getMeRequest(telegramUser.id.toString());
+      const response = await getMeRequestV2();
       console.log("User data", response.user);
       
       if (response.user) {

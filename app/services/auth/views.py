@@ -101,7 +101,7 @@ class AuthMiddleware:
         if not user:
             logger.warn(f"Не зарегестрированный пользователь | на {request.base_url.path} c {request.client.host}")
             raise HTTPException(detail="Вы не зарегестрированны", status_code=401)
-        request.state.user_id = user
+        request.state.user = user
         return request 
 
 class AdminPermissionMiddleware:

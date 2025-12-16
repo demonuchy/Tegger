@@ -85,7 +85,7 @@ const useApi = () => {
       }
     },[domain, initData])
 
-    const getMeRequestV2 = useCallback(async (telegramId) => {
+    const getMeRequestV2 = useCallback(async () => {
       try {
         const url = new URL(`${domain}/api/v2/users/me`);
         const response = await fetch(url.toString(), {
@@ -109,6 +109,31 @@ const useApi = () => {
     const getActiveApplications = useCallback(async (status = "active") => {
       try {
         const url = new URL(`${domain}/api/admin/application`);
+        url.searchParams.append('status', status);
+        
+        const response = await fetch(url.toString(), {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            "X-Telegram-Init-Data" : initData,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+        
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }, [domain, initData]);
+
+    const getActiveApplicationsV2 = useCallback(async (status = "active") => {
+      try {
+        const url = new URL(`${domain}/api/v2/admin/application`);
         url.searchParams.append('status', status);
         
         const response = await fetch(url.toString(), {
@@ -193,6 +218,7 @@ const useApi = () => {
       getMeRequest, 
       getMeRequestV2,
       getActiveApplications, 
+      getActiveApplicationsV2, 
       updateApplicationStatus,
       updateApplicationStatusV2
    };

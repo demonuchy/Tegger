@@ -22,3 +22,4 @@ def set_session(session: AsyncSession):
 def reset_session(token):
     """Сброс сессии из контекста"""
     _db_session.reset(token)
+

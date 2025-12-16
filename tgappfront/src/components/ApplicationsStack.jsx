@@ -5,7 +5,7 @@ import Error from './ErrorScreen';
 import useApi from '../hooks/useAPI';
 
 const Applications = () => {
-    const { getActiveApplications, updateApplicationStatus } = useApi();
+    const { getActiveApplicationsV2, updateApplicationStatusV2 } = useApi();
     const [applications, setApplications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const Applications = () => {
         try {
             setIsLoading(true);
             setError(null);
-            const response = await getActiveApplications("active");
+            const response = await getActiveApplicationsV2("active");
             
             if (response.applications) {
                 setApplications(response.applications);
@@ -62,7 +62,7 @@ const Applications = () => {
         try {
             setApplications(prev => prev.filter(app => app.id !== applicationId));
             
-            updateApplicationStatus(applicationId, status).catch(error => {
+            updateApplicationStatusV2(applicationId, status).catch(error => {
                 console.error('Error updating application status:', error);
                 alert('Не удалось обновить статус заявки на сервере');
             });
@@ -359,7 +359,7 @@ const ApplicationCard = memo(({ application, index, total, onSwipe, formatDate, 
                                         Отдел: Технический отдел
                                     </span>
                                 </div>
-                            </CSSTransition>
+                        </CSSTransition>й
                         </div>
                     </div>
                 </div>
