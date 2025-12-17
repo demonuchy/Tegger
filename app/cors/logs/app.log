@@ -1722,3 +1722,408 @@
 2025-12-17 07:30:46 - app.__main__ - INFO - Cоздаем Root пользователя
 2025-12-17 07:30:46 - app.config - INFO - СОЗДАЕМ АДМИНА...
 2025-12-17 07:30:47 - app.config - INFO - Admin : admin-admin
+2025-12-17 07:31:07 - app.main - INFO - start server
+2025-12-17 07:31:07 - app.main - INFO - successful start
+2025-12-17 07:33:09 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:33:09 - app.main - INFO - ОБрабатываю запрос бот...
+2025-12-17 07:33:11 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:33:41 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:33:41 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:33:42 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:33:42 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:34:08 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:34:08 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:34:08 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:34:08 - app.views - WARNING - Не зарегестрированный пользователь | на / c 172.19.0.1
+2025-12-17 07:34:08 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:34:32 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:34:32 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:34:32 - app.views - INFO - Подача заявки dmetro365
+2025-12-17 07:34:32 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:34:38 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:34:38 - app.main - INFO - ОБрабатываю запрос бот...
+2025-12-17 07:34:38 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:34:44 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:34:44 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:34:44 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:34:44 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:40:22 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:40:22 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:40:22 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:40:22 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:46:17 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:46:17 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:46:17 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:46:17 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:47:21 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:47:21 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:47:21 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:47:21 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:49:40 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:49:40 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:49:41 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:49:41 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:50:40 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:50:40 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:50:40 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:50:40 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:54:04 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:54:04 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:54:04 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:54:04 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:58:17 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:58:17 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:58:17 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:58:17 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 07:59:58 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 07:59:58 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 07:59:58 - app.views - INFO - Аунтификация пользователя
+2025-12-17 07:59:58 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:03:12 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:03:12 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:03:12 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:03:12 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:11:06 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:11:06 - app.main - INFO - ОБрабатываю запрос бот...
+2025-12-17 08:11:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:12:14 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:12:14 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:12:14 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:12:14 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:16:14 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:16:14 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:16:14 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:16:14 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:18:00 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:18:00 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:18:00 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:18:00 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:18:23 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:18:23 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:18:23 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:18:23 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:19:43 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:19:43 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:19:43 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:19:43 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:31:51 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:31:51 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:31:51 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:31:51 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:43:17 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:43:17 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:43:17 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:43:17 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:45:26 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:45:26 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:45:26 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:45:26 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:52:33 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:52:33 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:52:33 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:52:33 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:53:31 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:53:31 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:53:31 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:53:31 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:54:00 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:54:00 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:54:00 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:54:00 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:54:25 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:54:25 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:54:25 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:54:25 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:55:05 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:55:05 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:55:05 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:55:05 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:55:35 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:55:35 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:55:35 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:55:35 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 08:56:50 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 08:56:50 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 08:56:50 - app.views - INFO - Аунтификация пользователя
+2025-12-17 08:56:50 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 11:58:08 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 11:58:08 - app.main - INFO - ОБрабатываю запрос бот...
+2025-12-17 11:58:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 11:59:17 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 11:59:17 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 11:59:17 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 11:59:17 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 11:59:23 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 11:59:23 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 11:59:23 - app.views - INFO - Аунтификация пользователя
+2025-12-17 11:59:23 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:00:30 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:00:30 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:00:30 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:00:31 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:03:39 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:03:39 - app.main - INFO - ОБрабатываю запрос бот...
+2025-12-17 12:03:45 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:04:03 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:04:03 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:04:03 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:04:03 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:04:30 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:04:30 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:04:30 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:04:30 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:05:02 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:05:02 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:05:02 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:05:02 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:05:47 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:05:47 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:05:47 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:05:47 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:12:16 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:12:16 - app.main - INFO - ОБрабатываю запрос бот...
+2025-12-17 12:12:16 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:13:07 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:13:07 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:13:07 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:13:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:13:23 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:13:23 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:13:23 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:13:23 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:14:02 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:14:02 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:14:02 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:14:02 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:14:26 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:14:26 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:14:26 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:14:26 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:15:22 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:15:22 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:15:22 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:15:22 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:15:27 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:15:27 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:15:27 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:15:27 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:16:52 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:16:52 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:16:52 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:16:52 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:21:13 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:21:13 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:21:13 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:21:13 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:24:11 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:24:11 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:24:11 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:24:11 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:24:31 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:24:31 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:24:31 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:24:31 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:24:45 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:24:45 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:24:45 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:24:46 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:25:35 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:25:35 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:25:35 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:25:35 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:20 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:20 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:20 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:20 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:35 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:35 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:35 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:35 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:26:35 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:35 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:36 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:42 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:42 - app.views - INFO - Попытка входа 172.19.0.1 - root - root
+2025-12-17 12:26:42 - app.views - WARNING - Неверные учетные данные
+2025-12-17 12:26:42 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:50 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:50 - app.views - INFO - Попытка входа 172.19.0.1 - admin - admin
+2025-12-17 12:26:50 - app.views - INFO - Успешно
+2025-12-17 12:26:50 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:50 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:50 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:26:50 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:50 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:50 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:51 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:51 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:26:52 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:54 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:54 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:26:54 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:26:59 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:26:59 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:00 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:04 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:04 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:04 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:06 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:06 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:06 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:06 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:07 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:09 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:09 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:09 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:13 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:13 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:13 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:13 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:13 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:13 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:14 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:14 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:14 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:18 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:18 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:18 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:21 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:21 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:21 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:22 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:22 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:22 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:27 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:27 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:27 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:27 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:27 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:27:27 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:47 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:47 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:27:47 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:27:47 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:53 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:53 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:27:53 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:27:53 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:27:53 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:27:53 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:27:53 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:27:53 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:27:53 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:27:53 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:28:15 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:28:15 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:28:15 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:28:15 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:28:15 - app.views - INFO - Отклонение заявки user : dmetro365 - application :dmetro365
+2025-12-17 12:28:15 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:28:25 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:28:25 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:28:25 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:28:25 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:28:25 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:28:25 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:28:25 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:28:25 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:28:25 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:28:25 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:29:57 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:29:57 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:29:57 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:29:57 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:29:57 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:29:57 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:29:57 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:29:57 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:29:57 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:29:57 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:30:02 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:30:02 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:30:02 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:30:02 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:30:02 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:30:12 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:30:12 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:30:12 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:30:12 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:30:12 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:30:17 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:30:17 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:30:17 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:30:17 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:30:17 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:30:56 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:30:56 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:30:56 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:31:04 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:31:04 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:31:04 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:31:04 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:31:04 - app.views - INFO - Проверяю авторизацию
+2025-12-17 12:31:04 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:31:18 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:31:18 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:31:18 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:31:18 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:31:21 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:31:21 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:31:21 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:31:21 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:31:21 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:32:34 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:32:34 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:32:34 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:32:34 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:32:34 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:32:34 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:32:34 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:32:34 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:32:34 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:32:34 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:32:41 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:32:41 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:32:41 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:32:41 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:32:41 - app.views - INFO - Отклонение заявки user : dmetro365 - application :dmetro365
+2025-12-17 12:32:41 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:32:48 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:32:48 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:32:48 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:32:48 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:32:48 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:32:48 - app.middleware - INFO - DBSessionMiddleware: устанавливаю сессию
+2025-12-17 12:32:48 - app.views - INFO - Проверяю пришел ли запрос с телеграм Web App
+2025-12-17 12:32:48 - app.views - INFO - Аунтификация пользователя
+2025-12-17 12:32:48 - app.views - INFO - Поверка прав пользователя
+2025-12-17 12:32:48 - app.middleware - INFO - Запрос обработан успешно
+2025-12-17 12:34:57 - app.main - INFO - stop server
+2025-12-17 12:34:57 - app.main - INFO - successful stop
